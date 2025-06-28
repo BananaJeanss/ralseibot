@@ -29,12 +29,20 @@ interface ImageResult {
 }
 
 export class RedditHandler {
+    private static instance: RedditHandler;
     private config: any;
-    private recentlyShown: Set<string> = new Set(); // Track recently shown posts
-    private maxRecentlyShown: number = 50; // Keep track of last 50 posts
+    private recentlyShown: Set<string> = new Set();
+    private maxRecentlyShown: number = 50;
 
-    constructor() {
+    private constructor() {
         this.loadConfig();
+    }
+
+    public static getInstance(): RedditHandler {
+        if (!RedditHandler.instance) {
+            RedditHandler.instance = new RedditHandler();
+        }
+        return RedditHandler.instance;
     }
 
     private loadConfig() {

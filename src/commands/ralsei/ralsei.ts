@@ -9,17 +9,23 @@ module.exports = {
         await interaction.deferReply();
         
         try {
-            const redditHandler = new RedditHandler();
+            const redditHandler = RedditHandler.getInstance(); // Use singleton
             var imageResult = await redditHandler.fetchImage();
             
             let retryCount = 0;
             
+            // Try to fetch the image up to 3 times if the first attempt fails
+            while (!imageResult && retryCount < 3) {
+                console.log(`Retrying to fetch Ralsei image... Attempt ${retryCount + 1}`);
+                imageResult = await redditHandler.fetchImage();
+                retryCount++;
+            }
+            
+            // If still no result after retries, send error message
             if (!imageResult) {
-                while (!imageResult && retryCount < 3) {
-                    console.log(`Retrying to fetch Ralsei image... Attempt ${retryCount + 1}`);
-                    imageResult = await redditHandler.fetchImage();
-                    retryCount++;
-                }
+                await interaction.editReply({
+                    content: 'Sorry, I couldn\'t fetch a Ralsei image right now. Please try again later!',
+                });
                 return;
             }
             
