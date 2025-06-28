@@ -1,0 +1,17 @@
+sources:
+  reddit:
+    - name: "r/ralsei"
+      url: "https://www.reddit.com/r/ralsei/"
+    - name: "r/Deltarune"
+      url: "https://www.reddit.com/r/Deltarune/"
+    - name: "r/undertale"
+      url: "https://www.reddit.com/r/Undertale/"
+      
+settings: 
+  default:
+    user-agent: "ralseibot (https://github.com/BananaJeanss/ralseibot)"
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    timeout-ms: 5000
+    max-retries: 3

@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "deploy-commands": "node dist/deploy-commands.js",
     "dev": "ts-node src/index.ts",
     "watch": "tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +16,8 @@
   "description": "",
   "dependencies": {
     "discord.js": "^14.21.0",
-    "dotenv": "^16.6.1"
+    "dotenv": "^16.6.1",
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
