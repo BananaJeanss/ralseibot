@@ -1,9 +1,11 @@
-import { Events } from 'discord.js';
+import { Client, Events } from 'discord.js';
+import { startRotatingStatus } from './rotateStatus';
 
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
-	execute(client: { user: { tag: any; }; }) {
-		console.log(`Ready! Logged in as ${client.user.tag}`);
+	execute(client: Client) {
+		console.log(`Ralseibot ready! Logged in as ${client.user?.tag}`);
+		startRotatingStatus;
 	},
 };
