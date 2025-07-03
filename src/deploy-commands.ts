@@ -14,27 +14,35 @@ if (!token || !clientId || !guildId) {
   );
 }
 
-const commands = [];
+const commands: any[] = [];
 const foldersPath = path.join(__dirname, "commands");
-const commandFolders = fs.readdirSync(foldersPath);
 
-for (const folder of commandFolders) {
-  const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
-  for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
-    if ("data" in command && "execute" in command) {
-      commands.push(command.data.toJSON());
-    } else {
-      console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-      );
+function loadCommands(dir: string) {
+  const items = fs.readdirSync(dir);
+  
+  for (const item of items) {
+    const itemPath = path.join(dir, item);
+    const stat = fs.statSync(itemPath);
+    
+    if (stat.isDirectory()) {
+      // Recursively search subdirectories
+      loadCommands(itemPath);
+    } else if (item.endsWith(".ts") || item.endsWith(".js")) {
+      // Load command file
+      const command = require(itemPath);
+      if ("data" in command && "execute" in command) {
+        commands.push(command.data.toJSON());
+        console.log(`Loaded command: ${command.data.name}`);
+      } else {
+        console.log(
+          `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`
+        );
+      }
     }
   }
 }
+
+loadCommands(foldersPath);
 
 const rest = new REST().setToken(token);
 
