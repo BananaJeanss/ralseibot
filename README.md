@@ -5,7 +5,6 @@ Currently in early development.
 
 ## To-Do List
 
-- `/ralsei` - Get a random Ralsei image from different sources (e.g. Twitter, Reddit, etc.) with author credits
 - `/ralsei-quote` - Get a random Ralsei quote from in-game
 - Automated events (daily quotes, featured images, etc.)
 - Role pings when "ralsei" is mentioned in messages (TBD)

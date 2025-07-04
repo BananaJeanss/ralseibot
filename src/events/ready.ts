@@ -6,6 +6,6 @@ module.exports = {
 	once: true,
 	execute(client: Client) {
 		console.log(`Ralseibot ready! Logged in as ${client.user?.tag}`);
-		startRotatingStatus;
+		startRotatingStatus(client);
 	},
 };
