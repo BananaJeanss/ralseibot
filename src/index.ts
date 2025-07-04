@@ -7,6 +7,7 @@ config();
 declare module 'discord.js' {
 	export interface Client {
 		commands: Collection<string, any>;
+        cooldowns: Collection<string, Collection<string, number>>;
 	}
 }
 
@@ -15,6 +16,7 @@ const token = process.env.DISCORD_BOT_TOKEN;
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
+client.cooldowns = new Collection(); // store cooldowns for commands
 const foldersPath = path.join(__dirname, 'commands');
 
 function loadCommands(dir: string) {
