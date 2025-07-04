@@ -2,3 +2,6 @@ node_modules
 dist
 *.env
 !.env.example
+
+# ignore extracted sprites from spritesheet
+**/individual_sprites/
