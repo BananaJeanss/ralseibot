@@ -9,6 +9,10 @@ sources:
     - name: "r/undertale"
       url: "https://www.reddit.com/r/Undertale/"
       weight: 1
+  twitter:
+    - name: "Bi-Hourly Ralsei"
+      url: "https://x.com/bihourlyralsei"
+      weight: 5
       
 settings: 
   default:
