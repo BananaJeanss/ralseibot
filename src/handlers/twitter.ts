@@ -1,9 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import yaml from "yaml";
-import { Scraper, Tweet } from "@the-convocation/twitter-scraper";
+import { chromium } from "playwright";
 
 export interface TweetResult {
+  title: string;
   text: string;
   mediaUrls: string[];
   author: string;
@@ -11,7 +12,6 @@ export interface TweetResult {
   sourceName: string;
 }
 
-// shape of each entry in sources.yaml twitter list
 interface TwitterSource {
   name: string;
   url: string;
@@ -21,33 +21,9 @@ interface TwitterSource {
 export class TwitterHandler {
   private static instance: TwitterHandler;
   private config: any;
-  private scraper: Scraper;
 
   private constructor() {
     this.loadConfig();
-    const settings = this.config.settings.default;
-
-    const baseHeaders: Record<string, string> = {
-      ...settings.headers,
-      "User-Agent": settings["user-agent"],
-      ...(process.env.TWITTER_BEARER_TOKEN
-        ? { Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}` }
-        : {}),
-    };
-
-    this.scraper = new Scraper({
-      // now only known ScraperOptions keys
-      transform: {
-        request(input: RequestInfo | URL, init?: RequestInit) {
-          // merge our base headers with any per‐request headers
-          const headers = {
-            ...((init?.headers as Record<string, string>) || {}),
-            ...baseHeaders,
-          };
-          return [input, { ...init, headers }];
-        },
-      },
-    });
   }
 
   public static getInstance(): TwitterHandler {
@@ -82,30 +58,70 @@ export class TwitterHandler {
     const src = this.weightedRandom(twitterSources);
     const username = new URL(src.url).pathname.replace("/", "");
 
-    try {
-      const tweetGen = this.scraper.getTweets(username, 50);
+    const browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
 
-      const tweets: Tweet[] = [];
-      for await (const tweet of tweetGen) {
-        tweets.push(tweet);
+    try {
+      await page.goto(`https://twitter.com/${username}`, {
+        waitUntil: "domcontentloaded",
+      });
+
+      // scroll to load more tweets
+      for (let i = 0; i < 5; i++) {
+        // @ts-expect-error: 'window' is defined in browser context
+        await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+        await page.waitForTimeout(1000);
       }
 
-      const originals = tweets.filter(
-        (t) => t.text && !t.text.startsWith("RT ") && !t.text.startsWith("@")
-      );
-      if (!originals.length) return null;
+      // wait for tweets to render
+      await page.waitForSelector("article");
 
-      const tw = originals[Math.floor(Math.random() * originals.length)];
+      const tweets = await page.$$eval("article", (articles) =>
+        articles.map((article) => {
+          // Get main tweet text only
+          const textDiv = article.querySelector('div[data-testid="tweetText"]');
+          const text = textDiv ? textDiv.innerText : "";
+          const linkEl = article.querySelector('a[href*="/status/"]');
+          const url = linkEl
+            ? `https://twitter.com${linkEl.getAttribute("href")}`
+            : "";
+          // exclude profile pics
+          const mediaUrls = Array.from(article.querySelectorAll("img"))
+            .map((img: any) => img.src)
+            .filter((src) => src.includes("twimg.com/media"));
+          return { text, url, mediaUrls };
+        })
+      );
+
+      console.log("Fetched tweets:", JSON.stringify(tweets, null, 2));
+
+      await browser.close();
+
+      // Drop pinned tweet
+      const isPinned = tweets[0]?.text?.toLowerCase().includes("pinned");
+      const filtered = isPinned ? tweets.slice(1) : tweets;
+
+      const cleaned = filtered.filter(
+        (t) =>
+          t.text &&
+          !t.text.startsWith("RT ") &&
+          !t.text.startsWith("@") &&
+          t.url
+      );
+
+      const randomTweet = cleaned[Math.floor(Math.random() * cleaned.length)];
 
       return {
-        text: tw.text || "",
-        mediaUrls: [],
+        title: randomTweet.text.split("\n")[0] || "", // first line as a title
+        text: randomTweet.text, // full text for desc.
+        mediaUrls: randomTweet.mediaUrls || [],
         author: `@${username}`,
-        sourceUrl: `https://twitter.com/${username}/status/${tw.id}`,
+        sourceUrl: randomTweet.url || "",
         sourceName: src.name,
       };
     } catch (err) {
       console.error(`Twitter handler error for ${username}:`, err);
+      await browser.close();
       return null;
     }
   }
