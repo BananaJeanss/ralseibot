@@ -7,7 +7,8 @@ async function main() {
   const tweet = await handler.fetchTweet();
   if (!tweet) {
     console.log('No tweet returned');
-  } else {
+  }
+ else {
     console.log('✅ TweetResult:', tweet);
   }
 }

@@ -1,6 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
-import yaml from "yaml";
+import fs from 'node:fs';
+import path from 'node:path';
+import yaml from 'yaml';
 
 interface RedditPost {
   data: {
@@ -47,11 +47,12 @@ export class RedditHandler {
 
   private loadConfig() {
     try {
-      const configPath = path.join(process.cwd(), "sources.yaml");
-      const configFile = fs.readFileSync(configPath, "utf8");
+      const configPath = path.join(process.cwd(), 'sources.yaml');
+      const configFile = fs.readFileSync(configPath, 'utf8');
       this.config = yaml.parse(configFile);
-    } catch (error) {
-      console.error("Failed to load sources.yaml:", error);
+    }
+ catch (error) {
+      console.error('Failed to load sources.yaml:', error);
       throw error;
     }
   }
@@ -60,7 +61,7 @@ export class RedditHandler {
   private weightedRandom(sources: any[]) {
     const totalWeight = sources.reduce(
       (sum, src) => sum + (src.weight || 1),
-      0
+      0,
     );
     let rand = Math.random() * totalWeight;
     for (const src of sources) {
@@ -78,14 +79,14 @@ export class RedditHandler {
     const randomSource = this.weightedRandom(redditSources);
 
     // Try different sorting methods for variety
-    const sortMethods = ["hot", "new", "top", "rising"];
+    const sortMethods = ['hot', 'new', 'top', 'rising'];
     const randomSort =
       sortMethods[Math.floor(Math.random() * sortMethods.length)];
 
     // For top, add time parameter for more variety
     let sortUrl = `${randomSource.url}${randomSort}.json?limit=100`;
-    if (randomSort === "top") {
-      const timeParams = ["day", "week", "month", "year"];
+    if (randomSort === 'top') {
+      const timeParams = ['day', 'week', 'month', 'year'];
       const randomTime =
         timeParams[Math.floor(Math.random() * timeParams.length)];
       sortUrl += `&t=${randomTime}`;
@@ -94,7 +95,7 @@ export class RedditHandler {
     try {
       const response = await fetch(sortUrl, {
         headers: {
-          "User-Agent": this.config.settings.default["user-agent"],
+          'User-Agent': this.config.settings.default['user-agent'],
         },
       });
 
@@ -107,14 +108,14 @@ export class RedditHandler {
 
       // Filter out recently shown posts
       const unseenPosts = filteredPosts.filter(
-        (post) => !this.recentlyShown.has(post.data.permalink)
+        (post) => !this.recentlyShown.has(post.data.permalink),
       );
 
       // If all posts have been seen recently, clear the cache and use all filtered posts
       const postsToChooseFrom =
         unseenPosts.length > 0 ? unseenPosts : filteredPosts;
       if (unseenPosts.length === 0) {
-        console.log("All posts recently shown, clearing cache for variety");
+        console.log('All posts recently shown, clearing cache for variety');
         this.recentlyShown.clear();
       }
 
@@ -140,32 +141,33 @@ export class RedditHandler {
         sourceUrl: `https://reddit.com${selectedPost.data.permalink}`,
         sourceName: `${randomSource.name} (${randomSort})`,
       };
-    } catch (error) {
+    }
+ catch (error) {
       console.error(`Reddit handler error for ${randomSource.name}:`, error);
       return null;
     }
   }
 
   private filterPosts(posts: RedditPost[]): RedditPost[] {
-    const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
-    const ralseiKeywords = ["ralsei", "goat boy", "fluffy boy", "prince"];
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    const ralseiKeywords = ['ralsei', 'goat boy', 'fluffy boy', 'prince'];
 
     return posts.filter((post) => {
       if (post.data.over_18) return false;
       if (post.data.is_self) return false;
 
       const hasImageExtension = allowedExtensions.some((ext) =>
-        post.data.url.toLowerCase().includes(`.${ext}`)
+        post.data.url.toLowerCase().includes(`.${ext}`),
       );
       if (!hasImageExtension) return false;
 
       // Must mention Ralsei in title
       const titleLower = post.data.title.toLowerCase();
       const hasRalseiKeyword = ralseiKeywords.some((keyword) =>
-        titleLower.includes(keyword.toLowerCase())
+        titleLower.includes(keyword.toLowerCase()),
       );
 
-      if (!hasRalseiKeyword && !post.data.url.includes("ralsei")) {
+      if (!hasRalseiKeyword && !post.data.url.includes('ralsei')) {
         return false;
       }
 

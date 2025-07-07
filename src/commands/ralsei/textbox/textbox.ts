@@ -1,45 +1,45 @@
-import { SlashCommandBuilder, AttachmentBuilder } from "discord.js";
-import { createCanvas, loadImage, registerFont } from "canvas";
-import path from "node:path";
-import fs from "node:fs";
+import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
+import { createCanvas, loadImage, registerFont } from 'canvas';
+import path from 'node:path';
+import fs from 'node:fs';
 
 // custom font registration
-const fontPath = path.join(__dirname, "sprites", "determination-mono.ttf");
+const fontPath = path.join(__dirname, 'sprites', 'determination-mono.ttf');
 if (fs.existsSync(fontPath)) {
-  registerFont(fontPath, { family: "DeterminationMono" });
+  registerFont(fontPath, { family: 'DeterminationMono' });
 }
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("textbox")
-    .setDescription("Generate a textbox image")
+    .setName('textbox')
+    .setDescription('Generate a textbox image')
     .addStringOption((option) =>
       option
-        .setName("character")
-        .setDescription("Choose a character for the textbox")
+        .setName('character')
+        .setDescription('Choose a character for the textbox')
         .setRequired(true)
         .addChoices(
-          { name: "Kris", value: "kris" },
-          { name: "Susie", value: "susie" },
-          { name: "Ralsei", value: "ralsei" }
-        )
+          { name: 'Kris', value: 'kris' },
+          { name: 'Susie', value: 'susie' },
+          { name: 'Ralsei', value: 'ralsei' },
+        ),
     )
     .addStringOption((option) =>
       option
-        .setName("text")
-        .setDescription("The text to display in the textbox")
+        .setName('text')
+        .setDescription('The text to display in the textbox')
         .setRequired(true)
-        .setMaxLength(300)
+        .setMaxLength(300),
     ),
   async execute(interaction: any) {
     await interaction.deferReply();
     console.log(
-      `Generating textbox for ${interaction.user.tag} in ${interaction.guild.name}`
+      `Generating textbox for ${interaction.user.tag} in ${interaction.guild.name}`,
     );
 
     try {
-      const character = interaction.options.getString("character");
-      const text = interaction.options.getString("text");
+      const character = interaction.options.getString('character');
+      const text = interaction.options.getString('text');
 
       const textboxImage = await generateTextbox(character, text);
 
@@ -50,11 +50,12 @@ module.exports = {
       await interaction.editReply({
         files: [attachment],
       });
-    } catch (error) {
-      console.error("Error generating textbox:", error);
+    }
+ catch (error) {
+      console.error('Error generating textbox:', error);
       await interaction.editReply({
         content:
-          "Sorry, there was an error generating the textbox. Please try again later!",
+          'Sorry, there was an error generating the textbox. Please try again later!',
       });
     }
   },
@@ -62,7 +63,7 @@ module.exports = {
 
 async function generateTextbox(
   character: string,
-  text: string
+  text: string,
 ): Promise<Buffer> {
   // values
   const width = 640;
@@ -71,14 +72,14 @@ async function generateTextbox(
   const spriteX = 20;
 
   const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
 
   // background
-  ctx.fillStyle = "#000000";
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, width, height);
 
   // White border
-  ctx.strokeStyle = "#FFFFFF";
+  ctx.strokeStyle = '#FFFFFF';
   ctx.lineWidth = 8;
   ctx.strokeRect(2, 2, width - 4, height - 4);
 
@@ -86,23 +87,25 @@ async function generateTextbox(
 
   // Load and draw character sprite
   try {
-    const spritePath = path.join(__dirname, "sprites", `${character}.png`);
+    const spritePath = path.join(__dirname, 'sprites', `${character}.png`);
     if (fs.existsSync(spritePath)) {
       const sprite = await loadImage(spritePath);
       ctx.drawImage(sprite, spriteX, spriteY, spriteSize, spriteSize);
-    } else {
+    }
+ else {
       // Draw a placeholder if sprite doesn't exist
       drawPlaceholderSprite(ctx, character);
     }
-  } catch (error) {
+  }
+ catch (error) {
     console.log(`Could not load sprite for ${character}:`, error);
     // Draw a placeholder if sprite doesn't exist
     drawPlaceholderSprite(ctx, character);
   }
 
   // font settings
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "28px DeterminationMono, monospace";
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '28px DeterminationMono, monospace';
 
   // Word wrap and draw text
   const maxWidth = width - 140;
@@ -110,19 +113,20 @@ async function generateTextbox(
   const startX = 125;
   const startY = 50;
 
-  const words = text.split(" ");
+  const words = text.split(' ');
   const lines: string[] = [];
-  let currentLine = "";
+  let currentLine = '';
 
   // draw text
   for (const word of words) {
-    const testLine = currentLine + (currentLine ? " " : "") + word;
+    const testLine = currentLine + (currentLine ? ' ' : '') + word;
     const metrics = ctx.measureText(testLine);
 
     if (metrics.width > maxWidth && currentLine) {
       lines.push(currentLine);
       currentLine = word;
-    } else {
+    }
+ else {
       currentLine = testLine;
     }
   }
@@ -139,32 +143,32 @@ async function generateTextbox(
     }
   });
 
-  return canvas.toBuffer("image/png");
+  return canvas.toBuffer('image/png');
 
   function drawPlaceholderSprite(ctx: any, character: string) {
     // Draw a colored placeholder rectangle
     const colors: { [key: string]: string } = {
-      kris: "#4A90E2",
-      susie: "#9013FE",
-      ralsei: "#4CAF50",
+      kris: '#4A90E2',
+      susie: '#9013FE',
+      ralsei: '#4CAF50',
     };
 
     const spriteY = (155 - spriteSize) / 2;
 
-    ctx.fillStyle = colors[character] || "#444444";
+    ctx.fillStyle = colors[character] || '#444444';
     ctx.fillRect(spriteX, spriteY, spriteSize, spriteSize);
-    ctx.fillStyle = colors[character] || "#444444";
+    ctx.fillStyle = colors[character] || '#444444';
     ctx.fillRect(spriteX, spriteY, spriteSize, spriteSize);
 
     // placeholder text
-    ctx.fillStyle = "#FFFFFF";
-    ctx.font = "bold 16px DeterminationMono, monospace";
-    ctx.textAlign = "center";
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 16px DeterminationMono, monospace';
+    ctx.textAlign = 'center';
     ctx.fillText(
       character.toUpperCase(),
       spriteX + spriteSize / 2,
-      spriteY + spriteSize / 2 + 6
+      spriteY + spriteSize / 2 + 6,
     );
-    ctx.textAlign = "left";
+    ctx.textAlign = 'left';
   }
 }
