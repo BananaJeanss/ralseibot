@@ -77,13 +77,21 @@ ch12DownloadUrl = "https://www.spriters-resource.com/download/110469/"
 ch34DownloadUrl = "https://www.spriters-resource.com/download/274914/"
 
 if __name__ == "__main__":
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     BG = [(0x81, 0x58, 0x9C), (0xB9, 0x7F, 0xFE)]
+
+    # output paths in the script's directory
+    ch12_path = os.path.join(script_dir, "ralsei_sprites.png")
+    ch34_path = os.path.join(script_dir, "ralsei_sprites_ch34.png")
+    ch12_out = os.path.join(script_dir, "individual_sprites", "ch12")
+    ch34_out = os.path.join(script_dir, "individual_sprites", "ch34")
+
     # check if ralsei_sprites.png exists, if not, download from spriters-resource
     # chapters 1-2
-    if not os.path.exists("ralsei_sprites.png"):
+    if not os.path.exists(ch12_path):
         print("Downloading chapter 1/2 ralsei_sprites.png...")
         response = requests.get(ch12DownloadUrl, stream=True)
-        with open("ralsei_sprites.png", "wb") as f:
+        with open(ch12_path, "wb") as f:
             total_size = int(response.headers.get("content-length", 0))
             for data in tqdm(
                 response.iter_content(chunk_size=1024),
@@ -93,11 +101,12 @@ if __name__ == "__main__":
             ):
                 f.write(data)
         print("Downloaded the chapter 1/2 Ralsei spritesheet.")
+
     # chapters 3-4
-    if not os.path.exists("ralsei_sprites_ch34.png"):
+    if not os.path.exists(ch34_path):
         print("Downloading chapter 3/4 ralsei_sprites.png...")
         response = requests.get(ch34DownloadUrl, stream=True)
-        with open("ralsei_sprites_ch34.png", "wb") as f:
+        with open(ch34_path, "wb") as f:
             total_size = int(response.headers.get("content-length", 0))
             for data in tqdm(
                 response.iter_content(chunk_size=1024),
@@ -107,5 +116,6 @@ if __name__ == "__main__":
             ):
                 f.write(data)
         print("Downloaded the chapter 3/4 Ralsei spritesheet.")
-    extract("ralsei_sprites.png", BG, tol=20, outdir="individual_sprites/ch12")
-    extract("ralsei_sprites_ch34.png", BG, tol=20, outdir="individual_sprites/ch34")
+
+    extract(ch12_path, BG, tol=20, outdir=ch12_out)
+    extract(ch34_path, BG, tol=20, outdir=ch34_out)
