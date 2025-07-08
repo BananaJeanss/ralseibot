@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
+import { SlashCommandBuilder, AttachmentBuilder, CommandInteraction } from 'discord.js';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -47,7 +47,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('ralsei-sprite')
     .setDescription('Get a random Ralsei sprite from chapters 1-4'),
-  async execute(interaction: any) {
+  async execute(interaction: CommandInteraction) {
     // Recursively get all PNG files
     const files = getAllPngFiles(spritesFolder);
     if (files.length === 0) {

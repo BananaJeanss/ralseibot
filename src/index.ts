@@ -1,14 +1,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, SlashCommandBuilder } from 'discord.js';
 import { config } from 'dotenv';
 config();
 
+interface Command {
+    data: SlashCommandBuilder;
+    execute: (...args: unknown[]) => Promise<void> | void;
+}
+
 declare module 'discord.js' {
-	export interface Client {
-		commands: Collection<string, any>;
+    export interface Client {
+        commands: Collection<string, Command>;
         cooldowns: Collection<string, Collection<string, number>>;
-	}
+    }
 }
 
 const token = process.env.DISCORD_BOT_TOKEN;

@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, AttachmentBuilder } from 'discord.js';
+import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -31,15 +31,22 @@ module.exports = {
         .setRequired(true)
         .setMaxLength(300),
     ),
-  async execute(interaction: any) {
+  async execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
     console.log(
-      `Generating textbox for ${interaction.user.tag} in ${interaction.guild.name}`,
+      `Generating textbox for ${interaction.user.tag} in ${interaction.guild?.name}`,
     );
 
     try {
       const character = interaction.options.getString('character');
       const text = interaction.options.getString('text');
+
+      if (!character || !text) {
+        await interaction.editReply({
+          content: 'Missing required parameters.',
+        });
+        return;
+      }
 
       const textboxImage = await generateTextbox(character, text);
 

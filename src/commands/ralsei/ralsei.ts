@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, CommandInteraction } from 'discord.js';
 import { RedditHandler } from '../../handlers/reddit';
 import { TwitterHandler } from '../../handlers/twitter';
 import yaml from 'yaml';
@@ -48,7 +48,7 @@ module.exports = {
     .setName('ralsei')
     .setDescription('Fetches a random Ralsei image'),
 
-  async execute(interaction: any) {
+  async execute(interaction: CommandInteraction) {
     await interaction.deferReply();
 
     const sources = loadSources();
