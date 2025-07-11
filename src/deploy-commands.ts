@@ -4,15 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 config();
-const token = process.env.DISCORD_BOT_TOKEN;
-const clientId = process.env.DISCORD_CLIENT_ID;
-const guildId = process.env.DISCORD_GUILD_ID;
 
-if (!token || !clientId || !guildId) {
-  throw new Error(
-    'Missing required environment variables: DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID, or DISCORD_GUILD_ID',
-  );
-}
+const token = process.env.DISCORD_BOT_TOKEN!;
+const clientId = process.env.DISCORD_CLIENT_ID!;
+
+
 
 const commands: any[] = [];
 const foldersPath = path.join(__dirname, 'commands');

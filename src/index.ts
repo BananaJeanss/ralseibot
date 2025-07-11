@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Client, Collection, GatewayIntentBits, SlashCommandBuilder } from 'discord.js';
 import { config } from 'dotenv';
+import { envCheck } from './events/envCheck';
 config();
+envCheck();
 
 interface Command {
     data: SlashCommandBuilder;
