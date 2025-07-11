@@ -1,9 +1,11 @@
 {
   "name": "ralseibot",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "python ./src/commands/ralsei/ralsei-sprite/sprites/extract-sprites.py && tsc && npm run copy-sprites",
+    "build": "tsc && npm run copy-sprites",
+    "extract-sprites": ".venv/bin/python ./src/commands/ralsei/ralsei-sprite/sprites/extract-sprites.py",
     "copy-sprites": "node scripts/copy-sprites.js",
     "start": "node dist/index.js",
     "deploy-commands": "node dist/deploy-commands.js",

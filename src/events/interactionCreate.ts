@@ -1,6 +1,6 @@
 import { Events, MessageFlags, Collection } from 'discord.js';
 
-module.exports = {
+export default {
   name: Events.InteractionCreate,
   async execute(interaction: {
     user: any;

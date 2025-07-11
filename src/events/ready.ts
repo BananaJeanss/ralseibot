@@ -1,7 +1,7 @@
 import { Client, Events } from 'discord.js';
-import { startRotatingStatus } from './rotateStatus';
+import { startRotatingStatus } from './rotateStatus.js';
 
-module.exports = {
+export default {
 	name: Events.ClientReady,
 	once: true,
 	execute(client: Client) {

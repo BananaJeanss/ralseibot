@@ -10,7 +10,7 @@ const uptimeMinutes = Math.floor((uptime % 3600) / 60);
 const uptimeSeconds = Math.floor(uptime % 60);
 const formattedUptime = `${uptimeHours}h ${uptimeMinutes}m ${uptimeSeconds}s`;
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName("about")
     .setDescription("Replies with information about the bot"),

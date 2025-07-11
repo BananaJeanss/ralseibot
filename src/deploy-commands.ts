@@ -2,18 +2,21 @@ import { REST, Routes } from 'discord.js';
 import { config } from 'dotenv';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { pathToFileURL } from 'node:url';
 
 config();
 
 const token = process.env.DISCORD_BOT_TOKEN!;
 const clientId = process.env.DISCORD_CLIENT_ID!;
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const commands: any[] = [];
 const foldersPath = path.join(__dirname, 'commands');
 
-function loadCommands(dir: string) {
+async function loadCommands(dir: string) {
   const items = fs.readdirSync(dir);
 
   for (const item of items) {
@@ -22,43 +25,45 @@ function loadCommands(dir: string) {
 
     if (stat.isDirectory()) {
       // Recursively search subdirectories
-      loadCommands(itemPath);
-    }
- else if (item.endsWith('.ts') || item.endsWith('.js')) {
-      // Load command file
-      const command = require(itemPath);
-      if ('data' in command && 'execute' in command) {
-        commands.push(command.data.toJSON());
-        console.log(`Loaded command: ${command.data.name}`);
-      }
- else {
-        console.log(
-          `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`,
-        );
+      await loadCommands(itemPath);
+    } else if (item.endsWith('.js')) {
+      // Load command file using dynamic import
+      try {
+        const fileUrl = pathToFileURL(itemPath).href;
+        const command = await import(fileUrl);
+        const commandModule = command.default || command;
+
+        if ('data' in commandModule && 'execute' in commandModule) {
+          commands.push(commandModule.data.toJSON());
+          console.log(`Loaded command: ${commandModule.data.name}`);
+        } else {
+          console.log(
+            `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`,
+          );
+        }
+      } catch (error) {
+        console.error(`Error loading command ${itemPath}:`, error);
       }
     }
   }
 }
 
-loadCommands(foldersPath);
+await loadCommands(foldersPath);
 
 const rest = new REST().setToken(token);
 
-(async () => {
-  try {
-    console.log(
-      `Started refreshing ${commands.length} application (/) commands.`,
-    );
+try {
+  console.log(
+    `Started refreshing ${commands.length} application (/) commands.`,
+  );
 
-    const data = (await rest.put(Routes.applicationCommands(clientId), {
-      body: commands,
-    })) as any[];
+  const data = (await rest.put(Routes.applicationCommands(clientId), {
+    body: commands,
+  })) as any[];
 
-    console.log(
-      `Successfully reloaded ${data.length} application (/) commands.`,
-    );
-  }
- catch (error) {
-    console.error(error);
-  }
-})();
+  console.log(
+    `Successfully reloaded ${data.length} application (/) commands.`,
+  );
+} catch (error) {
+  console.error(error);
+}

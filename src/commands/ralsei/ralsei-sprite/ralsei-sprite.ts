@@ -1,6 +1,10 @@
 import { SlashCommandBuilder, AttachmentBuilder, CommandInteraction } from 'discord.js';
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const spritesFolder = path.join(__dirname, 'sprites', 'individual_sprites');
 const ch12Folder = path.join(spritesFolder, 'ch12');
@@ -43,7 +47,7 @@ function getAllPngFiles(dir: string): string[] {
   return results;
 }
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('ralsei-sprite')
     .setDescription('Get a random Ralsei sprite from chapters 1-4'),

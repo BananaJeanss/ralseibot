@@ -3,8 +3,8 @@ import {
   EmbedBuilder,
   CommandInteraction,
 } from "discord.js";
-import { RedditHandler } from "../../handlers/reddit";
-import { TwitterHandler } from "../../handlers/twitter";
+import { RedditHandler } from "../../handlers/reddit.js";
+import { TwitterHandler } from "../../handlers/twitter.js";
 import { Filter } from "bad-words";
 import yaml from "yaml";
 import fs from "fs";
@@ -48,7 +48,7 @@ function weightedRandom<T extends { weight: number }>(items: T[]): T {
   return items[items.length - 1];
 }
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName("ralsei")
     .setDescription("Fetches a random Ralsei image"),

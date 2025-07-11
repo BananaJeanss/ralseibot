@@ -11,7 +11,7 @@ const formattedUptime = (() => {
 })();
 
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName("uptime")
     .setDescription("Replies with the bot's uptime"),

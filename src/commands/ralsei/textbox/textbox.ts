@@ -2,6 +2,10 @@ import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction } f
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // custom font registration
 const fontPath = path.join(__dirname, 'sprites', 'determination-mono.ttf');
@@ -9,7 +13,7 @@ if (fs.existsSync(fontPath)) {
   registerFont(fontPath, { family: 'DeterminationMono' });
 }
 
-module.exports = {
+export default {
   data: new SlashCommandBuilder()
     .setName('textbox')
     .setDescription('Generate a textbox image')

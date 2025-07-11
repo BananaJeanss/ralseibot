@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('ralsei-quote')
         .setDescription('Get a random Ralsei quote'),
