@@ -93,8 +93,6 @@ export class TwitterHandler {
         }),
       );
 
-      console.log('Fetched tweets:', JSON.stringify(tweets, null, 2));
-
       await browser.close();
 
       // Drop pinned tweet

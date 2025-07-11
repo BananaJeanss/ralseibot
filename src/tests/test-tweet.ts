@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 config();
-import { TwitterHandler } from './handlers/twitter';
+import { TwitterHandler } from '../handlers/twitter';
 
 async function main() {
   const handler = TwitterHandler.getInstance();
