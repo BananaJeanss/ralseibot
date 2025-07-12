@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 import { envCheck } from './events/envCheck.js';
 import { fileURLToPath } from 'node:url';
 import { pathToFileURL } from 'node:url';
+import { startServer } from './site/express.js';
 config();
 envCheck();
 
@@ -81,6 +82,15 @@ async function loadEvents() {
     }
 }
 
+// site handler
+// run_mode check
+const runMode = process.env.RUN_MODE || 'dual';
+if (runMode === 'site' || runMode === 'dual') {
+    console.log('Starting express site')
+    startServer();
+}
+
+// todo: dont run bot if runmode is set to site
 async function main() {
     await loadCommands(foldersPath);
     await loadEvents();
