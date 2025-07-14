@@ -36,8 +36,43 @@ hr {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    position: relative;
 }
 
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.hero p,
+.hero h1,
+.hero-buttons {
+    position: relative;
+    z-index: 2;
+}
+
+.hero p,
+.hero h1 {
+    text-shadow: 
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000;
+}
+
+.hero p {
+    font-size: 1.2rem;
+}
+
+.hero h1 {
+    font-size: 3rem;
+}
 .hero-buttons {
     display: flex;
     gap: 20px;
@@ -46,21 +81,63 @@ hr {
 .hero-buttons a {
     text-decoration: none;
     color: #f0f0f0;
-    background-color: #007bff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+}
+
+.hero-buttons a[href*="github"] {
+    background: linear-gradient(135deg, #24292e 0%, #1a1e22 100%);
+    border: 2px solid #444d56;
+}
+
+.hero-buttons a[href*="github"]:hover {
+    background: linear-gradient(135deg, #2f363d 0%, #24292e 100%);
+    border-color: #586069;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hero-buttons a[href*="oauth2/authorize"] {
+    background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%);
+    border: 2px solid #4752c4;
+}
+
+.hero-buttons a[href*="oauth2/authorize"]:hover {
+    background: linear-gradient(135deg, #4752c4 0%, #3c45a5 100%);
+    border-color: #3c45a5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(71, 82, 196, 0.4);
+}
+
+.hero-buttons a[href*="discord.gg"] {
+    background: linear-gradient(135deg, #57f287 0%, #3ba55c 100%);
+    border: 2px solid #3ba55c;
+    color: #1e1e1e;
+}
+
+.hero-buttons a[href*="discord.gg"]:hover {
+    background: linear-gradient(135deg, #3ba55c 0%, #2d7d32 100%);
+    border-color: #2d7d32;
+    color: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(59, 165, 92, 0.4);
 }
 
 .hero-buttons a img {
-    color: #f0f0f0;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
 }
 
-.hero-buttons a:hover {
-    background-color: #0056b3;
+.hero-buttons a:hover img {
+    transform: scale(1.1);
 }
 
 .content {
