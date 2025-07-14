@@ -18,8 +18,19 @@ function copyRecursiveSync(src, dest) {
   }
 }
 
+// copy public static files
 const srcPublic = path.join(__dirname, '../src/site/public');
 const destPublic = path.join(__dirname, '../dist/site/public');
-
 copyRecursiveSync(srcPublic, destPublic);
 console.log('Copied static files to dist.');
+
+// copy ralsei.png
+const srcRalsei = path.join(__dirname, '../src/commands/ralsei/ralseify/ralsei.png');
+const destRalsei = path.join(__dirname, '../dist/commands/ralsei/ralseify/ralsei.png');
+if (fs.existsSync(srcRalsei)) {
+  fs.mkdirSync(path.dirname(destRalsei), { recursive: true });
+  fs.copyFileSync(srcRalsei, destRalsei);
+  console.log('Copied ralsei.png for ralseify command.');
+} else {
+  console.warn('Warning: ralsei.png not found at', srcRalsei);
+}
