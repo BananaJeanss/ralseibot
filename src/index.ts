@@ -1,3 +1,5 @@
+import { envCheck } from "./events/envCheck.js";
+config();
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -7,11 +9,10 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { config } from "dotenv";
-import { envCheck } from "./events/envCheck.js";
 import { fileURLToPath } from "node:url";
 import { pathToFileURL } from "node:url";
 import { startServer } from "./site/express.js";
-config();
+
 envCheck();
 
 interface Command {
