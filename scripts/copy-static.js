@@ -30,7 +30,19 @@ const destRalsei = path.join(__dirname, '../dist/commands/ralsei/ralseify/ralsei
 if (fs.existsSync(srcRalsei)) {
   fs.mkdirSync(path.dirname(destRalsei), { recursive: true });
   fs.copyFileSync(srcRalsei, destRalsei);
-  console.log('Copied ralsei.png for ralseify command.');
+  console.log('Copied ralsei.png');
 } else {
   console.warn('Warning: ralsei.png not found at', srcRalsei);
+}
+
+// copy statuses.json
+const srcStatuses = path.join(__dirname, '../src/events/statuses.json');
+const destStatuses = path.join(__dirname, '../dist/events/statuses.json');
+if (fs.existsSync(srcStatuses)) {
+  fs.mkdirSync(path.dirname(destStatuses), { recursive: true });
+  fs.copyFileSync(srcStatuses, destStatuses);
+  console.log('Copied statuses.json');
+}
+else {
+  console.warn('Warning: statuses.json not found at', srcStatuses);
 }
