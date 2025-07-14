@@ -1,3 +1,6 @@
+import { config } from "dotenv";
+config();
+
 import express, { Request, Response } from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
