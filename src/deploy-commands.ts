@@ -1,11 +1,8 @@
 import { REST, Routes } from 'discord.js';
-import { config } from 'dotenv';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { pathToFileURL } from 'node:url';
-
-config();
 
 const token = process.env.DISCORD_BOT_TOKEN!;
 const clientId = process.env.DISCORD_CLIENT_ID!;

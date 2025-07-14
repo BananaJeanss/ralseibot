@@ -1,5 +1,3 @@
-import { config } from 'dotenv';
-config();
 import { TwitterHandler } from '../handlers/twitter';
 
 async function main() {

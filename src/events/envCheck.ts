@@ -1,9 +1,5 @@
 // validate env
 
-import { config } from 'dotenv';
-
-config();
-
 export function envCheck() {
   let isWarning = false;
   const requiredEnvVars = [
