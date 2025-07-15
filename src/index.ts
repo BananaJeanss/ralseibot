@@ -55,7 +55,7 @@ async function loadCommands(dir: string) {
 
         if ("data" in commandModule && "execute" in commandModule) {
           client.commands.set(commandModule.data.name, commandModule);
-          console.log(`Loaded command: ${commandModule.data.name}`);
+          console.log(` > Loaded command: ${commandModule.data.name}`);
         } else {
           console.log(
             `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`
@@ -98,16 +98,16 @@ const runMode = process.env.RUN_MODE || "dual";
 
 async function main() {
   await loadEvents();
-
-  console.log(`Running in ${runMode} mode`);
-  if (runMode === "site" || runMode === "dual") {
-    console.log("Starting express site");
-    startServer();
-  }
   if (runMode === "bot" || runMode === "dual") {
-    console.log("Loading commands");
+    console.log("📜 Loading commands");
     await loadCommands(foldersPath);
     client.login(token);
+  }
+
+  console.log(`⏩ Running in ${runMode} mode`);
+  if (runMode === "site" || runMode === "dual") {
+    console.log("🕸️ Starting express site");
+    startServer();
   }
 }
 
