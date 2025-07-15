@@ -20,6 +20,16 @@ app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// TOS route
+app.get('/terms', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, 'public', 'terms.html'));
+});
+
+// Privacy Policy route
+app.get('/privacy', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, 'public', 'privacy.html'));
+});
+
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
   res.json({ 
