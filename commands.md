@@ -1,6 +1,4 @@
-# ralseibot Command Reference
-
-A quick reference for all slash commands supported by **ralseibot**.
+# ralseibot Commands
 
 ---
 

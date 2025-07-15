@@ -28,7 +28,7 @@ A Discord bot for all your Ralsei-related needs, built with TypeScript and Disco
 | `/uptime` | View bot uptime statistics |
 | `/about` | Information about the bot and its features |
 
-Not all commands are listed here, more commands can be found via the discord command selector.
+More commands can be found via the discord command selector, or via [commands.md](commands.md)
 
 ## Quick Start
 
