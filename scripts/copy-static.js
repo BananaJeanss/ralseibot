@@ -46,3 +46,15 @@ if (fs.existsSync(srcStatuses)) {
 else {
   console.warn('Warning: statuses.json not found at', srcStatuses);
 }
+
+// copy textbox sprites/files
+const srcSprites = path.join(__dirname, '../src/commands/ralsei/textbox/sprites');
+const destSprites = path.join(__dirname, '../dist/commands/ralsei/textbox/sprites');
+if (fs.existsSync(srcSprites)) {
+  fs.mkdirSync(destSprites, { recursive: true });
+  copyRecursiveSync(srcSprites, destSprites);
+  console.log('Copied textbox sprites');
+}
+else {
+  console.warn('Warning: sprites directory not found at', srcSprites);
+}

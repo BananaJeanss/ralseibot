@@ -25,7 +25,15 @@ export default {
         .addChoices(
           { name: 'Kris', value: 'kris' },
           { name: 'Susie', value: 'susie' },
-          { name: 'Ralsei', value: 'ralsei' },
+          { name: 'Hat Ralsei', value: 'hat-ralsei' },
+          { name: 'Hatless Ralsei', value: 'hatless-ralsei' },
+          { name: 'Lancer', value: 'lancer' },
+          { name: 'Queen', value: 'queen' },
+          { name: 'Noelle', value: 'noelle' },
+          { name: 'Tenna', value: 'tenna' },
+          { name: 'Sans', value: 'sans' },
+          { name: 'Spamton', value: 'spamton' },
+
         ),
     )
     .addStringOption((option) =>
