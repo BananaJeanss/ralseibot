@@ -150,4 +150,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Sprites**: Extracted from Deltarune spritesheets via [Spriters Resource](https://www.spriters-resource.com/)
 - **Hero Banner**: [@morxwx](https://x.com/morxwx) on Twitter
+- **Quotes**: [HushBugger/hushbugger.github.io](https://github.com/HushBugger/hushbugger.github.io/tree/master/deltarune/text)
+ for in-game quotes/text dump
 - **Built for**: [Hack Club Converge](https://converge.hackclub.com/)
