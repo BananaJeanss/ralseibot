@@ -13,9 +13,9 @@ A Discord bot for all your Ralsei-related needs, built with TypeScript and Disco
 
 - **Ralsei Content**: Fetches random Ralsei images from Reddit and Twitter sources
 - **Multiple fun commands**: Try out commands such as /ralsei-sprite, /ralseify, and more.
-- **💬 Textbox Generator**: Create custom deltarune textboxes with different preset characters
-- **🔄 Auto-Rotating Status**: Dynamic status messages that change periodically
-- **🛡️ Content Filtering**: Built-in profanity filter for safe content
+- **Textbox Generator**: Create custom deltarune textboxes with different preset characters
+- **Auto-Rotating Status**: Dynamic status messages that change periodically
+- **Content Filtering**: Built-in profanity filter for safe content
 
 ## 🤖 Commands
 

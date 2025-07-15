@@ -55,7 +55,7 @@ export default {
     setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
     try {
-      console.log(`Command ${command.data.name} executed by ${interaction.user.tag}`);
+      console.log(`> Command /${command.data.name} executed by @${interaction.user.tag} at ${new Date().toLocaleTimeString()}`);
       await command.execute(interaction);
     }
  catch (error) {
