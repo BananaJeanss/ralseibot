@@ -139,7 +139,7 @@ export class RedditHandler {
         author: `u/${selectedPost.data.author}`,
         title: selectedPost.data.title,
         sourceUrl: `https://reddit.com${selectedPost.data.permalink}`,
-        sourceName: `${randomSource.name} (${randomSort})`,
+        sourceName: `${randomSource.name} (sort by ${randomSort})`,
       };
     }
  catch (error) {
