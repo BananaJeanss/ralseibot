@@ -4,10 +4,9 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && npm run copy-sprites && npm run copy-static",
+    "build": "tsc && npm run copy-static",
     "copy-static": "node scripts/copy-static.js",
     "extract-sprites": ".venv/bin/python ./src/commands/ralsei/ralsei-sprite/sprites/extract-sprites.py",
-    "copy-sprites": "node scripts/copy-sprites.js",
     "start": "node dist/index.js",
     "deploy-commands": "node dist/deploy-commands.js",
     "dev": "tsx watch src/index.ts",

@@ -24,6 +24,18 @@ const destPublic = path.join(__dirname, '../dist/site/public');
 copyRecursiveSync(srcPublic, destPublic);
 console.log('Copied static files to dist.');
 
+// copy sprites
+const srcRalsSprites = path.join(__dirname, '../src/commands/ralsei/ralsei-sprite/sprites/individual_sprites');
+const destRalsSprites = path.join(__dirname, '../dist/commands/ralsei/ralsei-sprite/sprites/individual_sprites');
+
+if (fs.existsSync(srcRalsSprites)) {
+  fs.mkdirSync(path.dirname(destRalsSprites), { recursive: true });
+  copyRecursiveSync(srcRalsSprites, destRalsSprites);
+  console.log('Copied sprites to dist.');
+} else {
+  console.warn('Warning: individual_sprites directory not found at', srcRalsSprites);
+}
+
 // copy ralsei.png
 const srcRalsei = path.join(__dirname, '../src/commands/ralsei/ralseify/ralsei.png');
 const destRalsei = path.join(__dirname, '../dist/commands/ralsei/ralseify/ralsei.png');
