@@ -1,4 +1,7 @@
-# ralseibot
+<h1 style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 15px;">
+ralseibot 
+<img src="https://cdn.discordapp.com/avatars/1388252423197561013/f1221d7a75b7ce0295751d5498e20a74?size=256" alt="Ralseibot Avatar" width="64" height="64">
+</h1>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Discord.js](https://img.shields.io/badge/discord.js-v14-blue.svg)](https://discord.js.org/)

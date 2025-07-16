@@ -52,6 +52,7 @@ export default {
           inline: true,
         },
       )
+      .setThumbnail("https://cdn.discordapp.com/avatars/1388252423197561013/f1221d7a75b7ce0295751d5498e20a74?size=256")
 
     await interaction.reply({ embeds: [embed] });
   },
