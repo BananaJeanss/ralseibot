@@ -25,7 +25,7 @@
 | `/coin`                      | Flip a coin to decide your fate                              |
 | `/random-wiki`               | Gets a random wiki article from the Deltarune Wiki           |
 | `/dice`                      | Roll a 6-sided dice                                          |
-| `/ralseify-image`            | Ralseify either your profile picture or a provided image URL |
+| `/ralseify`            | Ralseify either your profile picture or a provided image URL |
 | `/textbox`                   | Generate a textbox image with custom text and sprites        |
 | `/motivational-quote`        | Get an image of a motivational quote with Deltarune backdrop |
 | `/quote`                     | Get a image of a motivational quote                          |

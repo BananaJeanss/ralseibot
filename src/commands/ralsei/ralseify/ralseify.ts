@@ -9,7 +9,7 @@ import { createCanvas, loadImage } from "canvas";
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("ralseify-image")
+    .setName("ralseify")
     .setDescription("Ralseify either your pfp, or provided image URL")
     .addStringOption((option) =>
       option
