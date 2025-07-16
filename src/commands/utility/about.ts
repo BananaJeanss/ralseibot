@@ -28,6 +28,7 @@ export default {
             "`/ralsei-sprite` - Random sprites from chapters 1-4",
             "`/textbox` - Generate textboxes with different sprites",
             "`/ping` - Check bot responsiveness",
+            "More commands can be found via [commands.md](https://github.com/BananaJeanss/ralseibot/blob/main/commands.md)",
           ].join("\n"),
           inline: false,
         },
@@ -50,9 +51,11 @@ export default {
             )}:R>`,
           ].join("\n"),
           inline: true,
-        },
+        }
       )
-      .setThumbnail("https://cdn.discordapp.com/avatars/1388252423197561013/f1221d7a75b7ce0295751d5498e20a74?size=256")
+      .setThumbnail(
+        "https://cdn.discordapp.com/avatars/1388252423197561013/f1221d7a75b7ce0295751d5498e20a74?size=256"
+      );
 
     await interaction.reply({ embeds: [embed] });
   },
