@@ -1,6 +1,11 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import yaml from 'yaml';
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+import { config } from "dotenv";
+config();
+
+const CLIENT_ID = process.env.REDDIT_CLIENT_ID;
+const CLIENT_SECRET = process.env.REDDIT_CLIENT_SECRET;
 
 interface RedditPost {
   data: {
@@ -28,11 +33,19 @@ interface ImageResult {
   sourceName: string;
 }
 
+interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
 export class RedditHandler {
   private static instance: RedditHandler;
   private config: any;
   private recentlyShown: Set<string> = new Set();
   private maxRecentlyShown: number = 50;
+  private accessToken: string | null = null;
+  private tokenExpiry: number = 0;
 
   private constructor() {
     this.loadConfig();
@@ -47,13 +60,63 @@ export class RedditHandler {
 
   private loadConfig() {
     try {
-      const configPath = path.join(process.cwd(), 'sources.yaml');
-      const configFile = fs.readFileSync(configPath, 'utf8');
+      const configPath = path.join(process.cwd(), "sources.yaml");
+      const configFile = fs.readFileSync(configPath, "utf8");
       this.config = yaml.parse(configFile);
-    }
- catch (error) {
-      console.error('Failed to load sources.yaml:', error);
+    } catch (error) {
+      console.error("Failed to load sources.yaml:", error);
       throw error;
+    }
+  }
+
+  private async getAccessToken(): Promise<string | null> {
+    // check if we have a valid token
+    if (this.accessToken && Date.now() < this.tokenExpiry) {
+      return this.accessToken;
+    }
+
+    // get new token if not
+    try {
+      const response = await fetch(
+        "https://www.reddit.com/api/v1/access_token",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${Buffer.from(
+              `${CLIENT_ID}:${CLIENT_SECRET}`
+            ).toString("base64")}`,
+            "User-Agent": this.config.settings.default["user-agent"],
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: "grant_type=client_credentials",
+        }
+      );
+
+      if (!response.ok) {
+        console.error(
+          "Failed to get Reddit access token:",
+          response.status,
+          response.statusText
+        );
+        return null;
+      }
+
+      const tokenData = (await response.json()) as TokenResponse;
+
+      if (!tokenData.access_token) {
+        console.error("No access token in response");
+        return null;
+      }
+
+      this.accessToken = tokenData.access_token;
+      // Set expiry with 5 minute buffer
+      this.tokenExpiry = Date.now() + (tokenData.expires_in - 300) * 1000;
+
+      console.log("Successfully obtained Reddit access token");
+      return this.accessToken;
+    } catch (error) {
+      console.error("Error getting Reddit access token:", error);
+      return null;
     }
   }
 
@@ -61,7 +124,7 @@ export class RedditHandler {
   private weightedRandom(sources: any[]) {
     const totalWeight = sources.reduce(
       (sum, src) => sum + (src.weight || 1),
-      0,
+      0
     );
     let rand = Math.random() * totalWeight;
     for (const src of sources) {
@@ -73,49 +136,76 @@ export class RedditHandler {
 
   async fetchImage(): Promise<ImageResult | null> {
     const redditSources = this.config.sources.reddit;
-    if (!redditSources || redditSources.length === 0) return null;
+    if (!redditSources || redditSources.length === 0) {
+      console.log("No Reddit sources configured");
+      return null;
+    }
+
+    // Get access token
+    const token = await this.getAccessToken();
+    if (!token) {
+      console.error("Could not obtain Reddit access token");
+      return null;
+    }
 
     // Pick a random subreddit
     const randomSource = this.weightedRandom(redditSources);
+    console.log(`Trying Reddit source: ${randomSource.name}`);
 
     // Try different sorting methods for variety
-    const sortMethods = ['hot', 'new', 'top', 'rising'];
+    const sortMethods = ["hot", "new", "top", "rising"];
     const randomSort =
       sortMethods[Math.floor(Math.random() * sortMethods.length)];
 
-    // For top, add time parameter for more variety
-    let sortUrl = `${randomSource.url}${randomSort}.json?limit=100`;
-    if (randomSort === 'top') {
-      const timeParams = ['day', 'week', 'month', 'year'];
+    // Use oauth.reddit.com for authenticated requests
+    let sortUrl = `https://oauth.reddit.com${randomSource.url}${randomSort}.json?limit=100`;
+    if (randomSort === "top") {
+      const timeParams = ["day", "week", "month", "year"];
       const randomTime =
         timeParams[Math.floor(Math.random() * timeParams.length)];
       sortUrl += `&t=${randomTime}`;
     }
 
+    console.log(`Fetching from: ${sortUrl}`);
+
     try {
       const response = await fetch(sortUrl, {
         headers: {
-          'User-Agent': this.config.settings.default['user-agent'],
+          Authorization: `Bearer ${token}`,
+          "User-Agent": this.config.settings.default["user-agent"],
         },
       });
 
-      if (!response.ok) return null;
+      console.log(`Response status: ${response.status}`);
+
+      if (!response.ok) {
+        console.log(
+          `Response not OK: ${response.status} ${response.statusText}`
+        );
+        return null;
+      }
 
       const data = (await response.json()) as RedditResponse;
-      const filteredPosts = this.filterPosts(data.data.children);
+      console.log(`Total posts fetched: ${data.data.children.length}`);
 
-      if (filteredPosts.length === 0) return null;
+      const filteredPosts = this.filterPosts(data.data.children);
+      console.log(`Posts after filtering: ${filteredPosts.length}`);
+
+      if (filteredPosts.length === 0) {
+        console.log("No posts passed filtering");
+        return null;
+      }
 
       // Filter out recently shown posts
       const unseenPosts = filteredPosts.filter(
-        (post) => !this.recentlyShown.has(post.data.permalink),
+        (post) => !this.recentlyShown.has(post.data.permalink)
       );
 
       // If all posts have been seen recently, clear the cache and use all filtered posts
       const postsToChooseFrom =
         unseenPosts.length > 0 ? unseenPosts : filteredPosts;
       if (unseenPosts.length === 0) {
-        console.log('All posts recently shown, clearing cache for variety');
+        console.log("All posts recently shown, clearing cache for variety");
         this.recentlyShown.clear();
       }
 
@@ -141,33 +231,34 @@ export class RedditHandler {
         sourceUrl: `https://reddit.com${selectedPost.data.permalink}`,
         sourceName: `${randomSource.name} (sort by ${randomSort})`,
       };
-    }
- catch (error) {
+    } catch (error) {
       console.error(`Reddit handler error for ${randomSource.name}:`, error);
       return null;
     }
   }
 
   private filterPosts(posts: RedditPost[]): RedditPost[] {
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-    const ralseiKeywords = ['ralsei', 'goat boy', 'fluffy boy', 'prince'];
+    const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
+    const ralseiKeywords = ["ralsei", "goat boy", "fluffy boy", "prince"];
 
     return posts.filter((post) => {
       if (post.data.over_18) return false;
       if (post.data.is_self) return false;
 
-      const hasImageExtension = allowedExtensions.some((ext) =>
-        post.data.url.toLowerCase().includes(`.${ext}`),
-      );
+      const hasImageExtension =
+        allowedExtensions.some((ext) =>
+          post.data.url.toLowerCase().includes(`.${ext}`)
+        ) || post.data.url.includes("i.redd.it");
+
       if (!hasImageExtension) return false;
 
       // Must mention Ralsei in title
       const titleLower = post.data.title.toLowerCase();
       const hasRalseiKeyword = ralseiKeywords.some((keyword) =>
-        titleLower.includes(keyword.toLowerCase()),
+        titleLower.includes(keyword.toLowerCase())
       );
 
-      if (!hasRalseiKeyword && !post.data.url.includes('ralsei')) {
+      if (!hasRalseiKeyword && !post.data.url.includes("ralsei")) {
         return false;
       }
 

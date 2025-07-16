@@ -36,8 +36,9 @@ More commands can be found via the discord command selector, or via [commands.md
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) 18 or higher
-- [A Discord bot token](https://discord.com/developers/applications)
 - [Python 3.x](https://python.org/) (for sprite extraction)
+- [A Discord bot token](https://discord.com/developers/applications)
+- [A Reddit app token](https://www.reddit.com/prefs/apps)
 
 ### Installation
 
@@ -56,7 +57,7 @@ More commands can be found via the discord command selector, or via [commands.md
    ```bash
    cp .env.example .env
    ```
-   Edit .env with your Discord bot token and client ID
+   Edit .env with your Discord bot token and client ID, and Reddit app client ID and secret.
 
 4. **Extract sprites** (optional)
    ```bash
@@ -86,6 +87,10 @@ More commands can be found via the discord command selector, or via [commands.md
 DISCORD_BOT_TOKEN=your_bot_token_here
 DISCORD_CLIENT_ID=your_client_id_here
 
+# Required for /ralsei
+REDDIT_CLIENT_ID=
+REDDIT_CLIENT_SECRET=
+
 # Optional
 RUN_MODE=dual  # bot, site, or dual
 EXPRESS_PORT=3000
@@ -105,7 +110,7 @@ Configure content sources in [`sources.yaml`](sources.yaml):
 sources:
   reddit:
     - name: "r/ralsei"
-      url: "https://www.reddit.com/r/ralsei/"
+      url: "/r/ralsei/"
       weight: 5
   twitter:
     - name: "Bi-Hourly Ralsei"

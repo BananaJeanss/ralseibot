@@ -1,13 +1,13 @@
 sources:
   reddit:
     - name: "r/ralsei"
-      url: "https://www.reddit.com/r/ralsei/"
+      url: "/r/ralsei/"
       weight: 5
     - name: "r/Deltarune"
-      url: "https://www.reddit.com/r/Deltarune/"
+      url: "/r/Deltarune/"
       weight: 2
     - name: "r/undertale"
-      url: "https://www.reddit.com/r/Undertale/"
+      url: "/r/Undertale/"
       weight: 1
   twitter:
     - name: "Bi-Hourly Ralsei"
@@ -16,7 +16,7 @@ sources:
       
 settings: 
   default:
-    user-agent: "ralseibot (https://github.com/BananaJeanss/ralseibot)"
+    user-agent: "ralseibot/1.0 by BananaJeanss"
     headers:
       Accept: "application/json"
       Content-Type: "application/json"
