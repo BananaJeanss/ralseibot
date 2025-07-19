@@ -1,49 +1,60 @@
-<h1>
-ralseibot 
-<img src="https://cdn.discordapp.com/avatars/1388252423197561013/f1221d7a75b7ce0295751d5498e20a74?size=256" alt="Ralseibot Avatar" width="64" height="64">
-</h1>
+<div align="center">
+<img src="./src/site/public/assets/hero2.png" alt="Ralseibot Banner" width="100%" style="max-width: 550px;">
+
+<br>
+
+A Discord Bot for all your Ralsei-related needs, built with TypeScript and Discord.js
+
+</div>
+
+<br>
+
+[![Discord](https://img.shields.io/badge/Discord%20Server-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/mNaHqRPtKq)
+[![Discord](https://img.shields.io/badge/Bot%20Invite-69ff0f?style=flat&logo=discord&logoColor=black)](https://discord.com/oauth2/authorize?client_id=1388252423197561013)
+[![Website](https://img.shields.io/badge/Website-f9459c?style=flat&logo=globe&logoColor=white)](https://ralseibot.bnajns.hackclub.app)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Discord.js](https://img.shields.io/badge/discord.js-v14-blue.svg)](https://discord.js.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
+[![GitHub stars](https://img.shields.io/github/stars/BananaJeanss/ralseibot?style=flat&logo=github&color=yellow)](https://github.com/BananaJeanss/ralseibot/stargazers)
 [![Deploy to Nest](https://github.com/BananaJeanss/ralseibot/actions/workflows/main.yml/badge.svg)](https://github.com/BananaJeanss/ralseibot/actions/workflows/main.yml)
+[![Health](https://img.shields.io/badge/dynamic/json?url=https://ralseibot.bnajns.hackclub.app/health&query=status&label=status&color=brightgreen&style=flat)](https://ralseibot.bnajns.hackclub.app/health)
 
-A Discord bot for all your ralsei-related needs, built with TypeScript and Discord.js. Features multiple commands, such as /ralsei, /ralsei-sprite, /textbox, and many more.
-
-[**🔗 Invite the bot**](https://discord.com/oauth2/authorize?client_id=1388252423197561013) • [**💬 Testing/Support Server**](https://discord.gg/mNaHqRPtKq) • [**🌐 Website**](https://ralseibot.bnajns.hackclub.app)
+---
 
 ## Features
 
-- **/ralsei**: Fetches random Ralsei images from Reddit and Twitter sources
-- **Multiple fun commands**: Try out commands such as /ralsei-sprite, /ralseify, and more.
-- **Textbox Generator**: Create custom deltarune textboxes with different preset characters with /textbox
-- **Auto-Rotating Status**: Dynamic status messages that change periodically
-- **Content Filtering**: Built-in profanity filter for safe content
+- **Multi-purpose commands**: Includes a variety of commands, such as /ralsei, /dice, /ralseify, /mike, /textbox, and many more viewable via [commands.md](commands.md).
+- **Basic Express Site**: Runs a basic Express site alongside the bot to display basic commands, uptime, and links.
+- **Rotating Statuses**: Features a list of rotating status messages configurable via `statuses.json`
+- **Content Filtering**: Filters out potentially harmful content in commands such as /ralsei
+- **Ratelimits**: Per-command ratelimits to prevent spam
 
-## 🤖 Commands
+## List of Commands
 
 | Command          | Description                                               |
 | ---------------- | --------------------------------------------------------- |
 | `/ralsei`        | Fetches a random Ralsei image from Reddit or Twitter      |
-| `/ralsei-sprite` | Get a random Ralsei sprite from chapters 1-4              |
+| `/ralsei-sprite` | Get a random Ralsei sprite                                |
 | `/textbox`       | Generate Deltarune textboxes with custom text and sprites |
-| `/ping`          | Check bot responsiveness                                  |
+| `/ping`          | Basic responsiveness check                                |
 | `/uptime`        | View bot uptime statistics                                |
-| `/about`         | Information about the bot and its features                |
+| `/about`         | View information about the bot                            |
 
-More commands can be found via the discord command selector, or via [commands.md](commands.md)
+> [!NOTE]  
+> More commands can be found via the discord command selector, or via [commands.md](commands.md)
 
 ## Quick Start
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18 or higher
-- [Python 3.x](https://python.org/) (for sprite extraction)
+- [Node.js](https://nodejs.org/) v18 or higher
+- [Python 3.x](https://python.org/) (optional, used in sprite extraction)
 - [A Discord bot token](https://discord.com/developers/applications)
 - [A Reddit app token](https://www.reddit.com/prefs/apps)
 
-### Installation
+### Local Installation
 
 1. **Clone the repository**
 
@@ -64,9 +75,10 @@ More commands can be found via the discord command selector, or via [commands.md
    cp .env.example .env
    ```
 
-   Edit .env with your Discord bot token and client ID, and Reddit app client ID and secret.
+> [!IMPORTANT]  
+> Make sure to edit .env with your Discord bot token and client ID, and Reddit app client ID and secret, otherwise the bot won't work.
 
-4. **Extract sprites** (optional)
+4. **Extract sprites** (optional for /ralsei-sprite)
 
    ```bash
    python -m venv .venv
@@ -87,33 +99,27 @@ More commands can be found via the discord command selector, or via [commands.md
    npm start
    ```
 
-## Configuration
+### Configuration
 
-### Environment Variables
+#### Environment Variables
 
 ```env
 # Required
 DISCORD_BOT_TOKEN=your_bot_token_here
 DISCORD_CLIENT_ID=your_client_id_here
 
-# Required for /ralsei
+# Required for Reddit handler to work (/ralsei)
 REDDIT_CLIENT_ID=
 REDDIT_CLIENT_SECRET=
 
-# Optional
+# Optional, but recommended that you set these.
 RUN_MODE=dual  # bot, site, or dual
 EXPRESS_PORT=3000
 ```
 
-### Run Modes
+#### Content Sources
 
-- `bot`: Discord bot only
-- `site`: Express website only
-- `dual`: Both bot and web server (default)
-
-### Content Sources
-
-Configure content sources in [`sources.yaml`](sources.yaml):
+You can configure content sources in [`sources.yaml`](sources.yaml), make sure a handler exists for it in the `handlers/` folder.
 
 ```yaml
 sources:
@@ -131,23 +137,23 @@ sources:
 
 ### Scripts
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build TypeScript to JavaScript
-- `npm run deploy-commands` - Deploys commands in dist/ to your Discord bot
+- `npm run dev` - Starts a development server with hot reload using tsx
+- `npm run build` - Builds TypeScript to JavaScript to `dist/`
+- `npm run deploy-commands` - Deploys commands in `dist/` to your Discord bot (required for commands to be accessible)
 - `npm run copy-static` - Copies over static files (such as html, sprites, etc) to dist/ folder
-- `npm run lint` - Run ESLint
+- `npm run lint` - Runs ESLint (current config may be broken, use with caution)
 
 ### Project Structure
 
 ```
 src/
-├── commands/           # Discord slash commands
+├── commands/          # Discord slash commands
 │   ├── ralsei/        # General/Ralsei commands
 │   └── utility/       # Utility commands
-├── events/            # Discord.js event handlers
-├── handlers/          # Content source handlers (Reddit, Twitter)
-├── site/             # Express.js web interface
-└── index.ts          # Main entry point
+├── events/            # General event handlers
+├── handlers/          # Content source handlers (e.g. Reddit, Twitter)
+├── site/              # Express site
+└── index.ts           # Main entry point
 ```
 
 ## Contributing
@@ -155,12 +161,20 @@ src/
 Contributions are welcome! Please feel free to:
 
 - Report bugs by [opening an issue](https://github.com/BananaJeanss/ralseibot/issues)
-- Suggest features via [feature requests](https://github.com/BananaJeanss/ralseibot/issues)
+- Suggest features via the [feature request template](https://github.com/BananaJeanss/ralseibot/issues)
 - Submit pull requests for improvements
+
+Make sure your contribution follows the general guidelines, and if you're opening a pull request, that it isn't being worked on by someone else already.
+
+For more information, read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+### Contributors:
+
+[![contributors](https://contributors-img.web.app/image?repo=BananaJeanss/ralseibot)](https://github.com/BananaJeanss/ralseibot/graphs/contributors)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
@@ -168,4 +182,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Hero Banner**: [@morxwx](https://x.com/morxwx) on Twitter
 - **Quotes**: [HushBugger/hushbugger.github.io](https://github.com/HushBugger/hushbugger.github.io/tree/master/deltarune/text)
   for in-game quotes/text dump
-- **Built for**: [Hack Club Converge](https://converge.hackclub.com/)
+
+Made for https://converge.hackclub.com/
