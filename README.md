@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./src/site/public/assets/hero2.png" alt="Ralseibot Banner" width="100%" style="max-width: 550px;">
+<img src="./src/site/public/assets/hero2.png" alt="Ralseibot Banner" width="70%"">
 
 <br>
 
