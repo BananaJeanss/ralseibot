@@ -15,9 +15,9 @@
     "lint:fix": "eslint . --ext .ts,.js --fix"
   },
   "keywords": [],
-  "author": "",
+  "author": "@BananaJeanss",
   "license": "MIT",
-  "description": "",
+  "description": "A Discord Bot for all your Ralsei-related needs, built with TypeScript and Discord.js",
   "dependencies": {
     "bad-words": "^4.0.0",
     "canvas": "^3.1.2",
