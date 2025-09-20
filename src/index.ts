@@ -29,7 +29,7 @@ declare module "discord.js" {
 
 const token = process.env.DISCORD_BOT_TOKEN;
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
 client.commands = new Collection();
 client.cooldowns = new Collection(); // store cooldowns for commands

@@ -70,3 +70,15 @@ if (fs.existsSync(srcSprites)) {
 else {
   console.warn('Warning: sprites directory not found at', srcSprites);
 }
+
+// copy radio songs
+const srcRadio = path.join(__dirname, '../src/commands/ralsei/radio/songs');
+const destRadio = path.join(__dirname, '../dist/commands/ralsei/radio/songs');
+if (fs.existsSync(srcRadio)) {
+  fs.mkdirSync(destRadio, { recursive: true });
+  copyRecursiveSync(srcRadio, destRadio);
+  console.log('Copied radio songs');
+}
+else {
+  console.warn('Warning: radio songs directory not found at', srcRadio);
+}
