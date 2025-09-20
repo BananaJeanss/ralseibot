@@ -10,6 +10,7 @@ import {
 } from "@discordjs/voice";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import fs from "node:fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,7 +71,15 @@ export default {
     connection.subscribe(player);
 
     // i cba to make a downloader script so it'll use static files
-    const songNames = ["hipshop.mp3", "home.mp3", "snowy.mp3", "darksanctuary.mp3"];
+    let songNames;
+    try {
+        songNames = await fs.promises.readdir(path.join(__dirname, "songs"));
+    } catch (e) {
+        console.error("[radio] Failed to read songs directory:", e);
+        await interaction.editReply("❌ No songs found to play.");
+        connection.destroy();
+        return;
+    }
     let randTrack = songNames[Math.floor(Math.random() * songNames.length)];
 
     const playTrack = () => {
@@ -82,7 +91,7 @@ export default {
     };
 
     playTrack();
-    await interaction.editReply(`▶️ Now playing: ${randTrack}`);
+    await interaction.editReply(`▶️ Now playing from a collection of ${songNames.length} tracks\nCurrent track: **${randTrack}**`);
 
     // loop track or leave if nobody else in vc
     player.on(AudioPlayerStatus.Idle, () => {

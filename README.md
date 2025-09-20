@@ -133,6 +133,10 @@ sources:
       weight: 5
 ```
 
+### Radio
+
+`/radio` plays songs from the `radio/songs/` folder in a voice channel. You can add your own songs in mp3 format to this folder, and they will be picked randomly when the command is used.
+
 ## Development
 
 ### Scripts
