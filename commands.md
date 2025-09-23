@@ -29,6 +29,14 @@
 | `/textbox`                   | Generate a textbox image with custom text and sprites        |
 | `/motivational-quote`        | Get an image of a motivational quote with Deltarune backdrop |
 | `/quote`                     | Get a image of a motivational quote                          |
-| `/radio`                     | Play music in a voice channel                                |
+
+### Radio Commands
+
+| Command                      | Description                                                  |
+| ---------------------------- | ------------------------------------------------------------ |
+| `/radio play`                | Play music in a voice channel                                |
+| `/radio stop`                | Stop music playback and leave the voice channel              |
+| `/radio nowplaying`          | Show the currently playing track                             |
+| `/radio history`             | Show the playback history                                     |
 
 ---
