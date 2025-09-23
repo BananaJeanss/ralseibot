@@ -13,11 +13,7 @@ import {
   getVoiceConnection,
 } from "@discordjs/voice";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import fs from "node:fs";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 let perServerHistory: { [guildId: string]: string[] } = {};
 let perServerNowPlaying: { [guildId: string]: string } = {};
@@ -138,7 +134,8 @@ export default {
 
       // i cba to make a downloader script so it'll use static files
       try {
-        songNames = await fs.promises.readdir(path.join(__dirname, "songs"));
+        songNames = await fs.promises.readdir(path.resolve(process.cwd(), "static", "songs"));
+        songNames = songNames.filter((file) => file.endsWith(".mp3") || file.endsWith(".wav") || file.endsWith(".ogg"));
       } catch (e) {
         console.error("[radio] Failed to read songs directory:", e);
         await interaction.editReply("❌ No songs found to play.");
@@ -150,7 +147,7 @@ export default {
       const playTrack = () => {
         // create a new resource for each play to avoid issues
         randTrack = songNames[Math.floor(Math.random() * songNames.length)];
-        const pathToTrack = path.join(__dirname, "songs", randTrack);
+        const pathToTrack = path.resolve(process.cwd(), "static", "songs", randTrack);
         const resource = createAudioResource(pathToTrack);
         player.play(resource);
 
