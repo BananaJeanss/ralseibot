@@ -4,7 +4,6 @@ import {
   AttachmentBuilder,
 } from "discord.js";
 import path from "path";
-import { fileURLToPath } from "url";
 import { createCanvas, loadImage } from "canvas";
 
 export default {
@@ -23,8 +22,7 @@ export default {
     await interaction.deferReply();
 
     try {
-      const __dirname = path.dirname(fileURLToPath(import.meta.url));
-      const ralseifyImg = path.join(__dirname, "ralsei.png");
+      const ralseifyImg = path.resolve(process.cwd(), "static", "ralsei.png");
       const imageUrl =
         interaction.options.getString("image") ||
         interaction.user.displayAvatarURL({ extension: "png", size: 512 });

@@ -36,17 +36,6 @@ if (fs.existsSync(srcRalsSprites)) {
   console.warn('Warning: individual_sprites directory not found at', srcRalsSprites);
 }
 
-// copy ralsei.png
-const srcRalsei = path.join(__dirname, '../src/commands/ralsei/ralseify/ralsei.png');
-const destRalsei = path.join(__dirname, '../dist/commands/ralsei/ralseify/ralsei.png');
-if (fs.existsSync(srcRalsei)) {
-  fs.mkdirSync(path.dirname(destRalsei), { recursive: true });
-  fs.copyFileSync(srcRalsei, destRalsei);
-  console.log('Copied ralsei.png');
-} else {
-  console.warn('Warning: ralsei.png not found at', srcRalsei);
-}
-
 // copy textbox sprites/files
 const srcSprites = path.join(__dirname, '../src/commands/ralsei/textbox/sprites');
 const destSprites = path.join(__dirname, '../dist/commands/ralsei/textbox/sprites');
