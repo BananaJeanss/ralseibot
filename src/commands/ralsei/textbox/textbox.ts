@@ -2,13 +2,9 @@ import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction } f
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // custom font registration
-const fontPath = path.join(__dirname, 'sprites', 'determination-mono.ttf');
+const fontPath = path.join(process.cwd(), 'static', 'textboxsprites', 'determination-mono.ttf');
 if (fs.existsSync(fontPath)) {
   registerFont(fontPath, { family: 'DeterminationMono' });
 }
@@ -106,7 +102,7 @@ async function generateTextbox(
 
   // Load and draw character sprite
   try {
-    const spritePath = path.join(__dirname, 'sprites', `${character}.png`);
+    const spritePath = path.join(process.cwd(), 'static', 'textboxsprites', `${character}.png`);
     if (fs.existsSync(spritePath)) {
       const sprite = await loadImage(spritePath);
       ctx.drawImage(sprite, spriteX, spriteY, spriteSize, spriteSize);

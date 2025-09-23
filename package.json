@@ -4,8 +4,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && npm run copy-static",
-    "copy-static": "node scripts/copy-static.js",
+    "build": "tsc",
     "extract-sprites": ".venv/bin/python ./static/sprites/extract-sprites.py",
     "start": "node dist/index.js",
     "deploy-commands": "node dist/deploy-commands.js",
