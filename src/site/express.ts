@@ -3,31 +3,27 @@ config();
 
 import express, { Request, Response } from 'express';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.EXPRESS_PORT || 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(process.cwd(), 'static', 'public')));
 
 // Routes
 app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(process.cwd(), 'static', 'public', 'index.html'));
 });
 
 // TOS route
 app.get('/terms', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, 'public', 'terms.html'));
+  res.sendFile(path.join(process.cwd(), 'static', 'public', 'terms.html'));
 });
 
 // Privacy Policy route
 app.get('/privacy', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, 'public', 'privacy.html'));
+  res.sendFile(path.join(process.cwd(), 'static', 'public', 'privacy.html'));
 });
 
 // Health check endpoint

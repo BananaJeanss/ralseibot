@@ -18,12 +18,6 @@ function copyRecursiveSync(src, dest) {
   }
 }
 
-// copy public static files
-const srcPublic = path.join(__dirname, '../src/site/public');
-const destPublic = path.join(__dirname, '../dist/site/public');
-copyRecursiveSync(srcPublic, destPublic);
-console.log('Copied static files to dist.');
-
 // copy sprites
 const srcRalsSprites = path.join(__dirname, '../src/commands/ralsei/ralsei-sprite/sprites/individual_sprites');
 const destRalsSprites = path.join(__dirname, '../dist/commands/ralsei/ralsei-sprite/sprites/individual_sprites');
