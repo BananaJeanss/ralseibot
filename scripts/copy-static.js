@@ -18,18 +18,6 @@ function copyRecursiveSync(src, dest) {
   }
 }
 
-// copy sprites
-const srcRalsSprites = path.join(__dirname, '../src/commands/ralsei/ralsei-sprite/sprites/individual_sprites');
-const destRalsSprites = path.join(__dirname, '../dist/commands/ralsei/ralsei-sprite/sprites/individual_sprites');
-
-if (fs.existsSync(srcRalsSprites)) {
-  fs.mkdirSync(path.dirname(destRalsSprites), { recursive: true });
-  copyRecursiveSync(srcRalsSprites, destRalsSprites);
-  console.log('Copied sprites to dist.');
-} else {
-  console.warn('Warning: individual_sprites directory not found at', srcRalsSprites);
-}
-
 // copy textbox sprites/files
 const srcSprites = path.join(__dirname, '../src/commands/ralsei/textbox/sprites');
 const destSprites = path.join(__dirname, '../dist/commands/ralsei/textbox/sprites');

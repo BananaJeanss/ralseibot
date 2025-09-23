@@ -1,12 +1,8 @@
 import { SlashCommandBuilder, AttachmentBuilder, CommandInteraction } from 'discord.js';
 import path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const spritesFolder = path.join(__dirname, 'sprites', 'individual_sprites');
+const spritesFolder = path.join(process.cwd(), 'static', 'sprites', 'individual_sprites');
 const ch12Folder = path.join(spritesFolder, 'ch12');
 const ch34Folder = path.join(spritesFolder, 'ch34');
 

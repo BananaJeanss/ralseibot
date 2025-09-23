@@ -83,7 +83,7 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
    ```bash
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   pip install -r src/commands/ralsei/ralsei-sprite/sprites/requirements.txt
+   pip install -r static/sprites/requirements.txt
    npm run extract-sprites
    ```
 
