@@ -1,10 +1,6 @@
 import { Client, ActivityType } from 'discord.js';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 interface StatusConfig {
   type: number;
@@ -15,7 +11,7 @@ export function startRotatingStatus(client: Client, intervalMs = 30000) {
   let statuses: StatusConfig[] = [];
   
   try {
-    const statusesPath = path.join(__dirname, 'statuses.json');
+    const statusesPath = path.resolve(process.cwd(), 'static', 'statuses.json');
     const statusesData = fs.readFileSync(statusesPath, 'utf8');
     statuses = JSON.parse(statusesData);
   } catch (error) {
