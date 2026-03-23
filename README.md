@@ -66,7 +66,7 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
 2. **Install dependencies**
 
    ```bash
-   npm install
+   bun i
    ```
 
 3. **Set up environment variables**
@@ -84,19 +84,18 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    pip install -r static/sprites/requirements.txt
-   npm run extract-sprites
+   bun run extract-sprites
    ```
 
-5. **Build and deploy commands**
+5. **Deploy commands**
 
    ```bash
-   npm run build
-   npm run deploy-commands
+   bun run deploy-commands
    ```
 
 6. **Start the bot**
    ```bash
-   npm start
+   bun start
    ```
 
 ### Configuration
@@ -141,24 +140,11 @@ sources:
 
 ### Scripts
 
-- `npm run dev` - Starts a development server with hot reload using tsx
-- `npm run build` - Builds TypeScript to JavaScript to `dist/`
-- `npm run deploy-commands` - Deploys commands in `dist/` to your Discord bot (required for commands to be accessible)
-- `npm run copy-static` - Copies over static files (such as html, sprites, etc) to dist/ folder
-- `npm run lint` - Runs ESLint (current config may be broken, use with caution)
-
-### Project Structure
-
-```
-src/
-├── commands/          # Discord slash commands
-│   ├── ralsei/        # General/Ralsei commands
-│   └── utility/       # Utility commands
-├── events/            # General event handlers
-├── handlers/          # Content source handlers (e.g. Reddit, Twitter)
-├── site/              # Express site
-└── index.ts           # Main entry point
-```
+- `bun run dev` - Starts a development server with hot reload using tsx
+- `bun run build` - Builds TypeScript to JavaScript to `dist/`
+- `bun run deploy-commands` - Deploys commands in `dist/` to your Discord bot (required for commands to be accessible)
+- `bun run copy-static` - Copies over static files (such as html, sprites, etc) to dist/ folder
+- `bun run lint` - Runs ESLint (current config may be broken, use with caution)
 
 ## Contributing
 
