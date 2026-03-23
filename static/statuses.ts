@@ -1,4 +1,17 @@
-[
+import { exec } from "node:child_process";
+
+exec("git rev-parse --short HEAD", (err, stdout) => {
+  if (err) {
+    console.error("Error getting git commit:", err);
+    return;
+  }
+  const commitHash = stdout.trim();
+  statuses.push({ type: 4, text: `git: ${commitHash}` });
+});
+
+// types: 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching, 4 = custom
+
+const statuses = [
   { "type": 0, "text": "with Ralsei" },
   { "type": 0, "text": "DELTARUNE" },
   { "type": 0, "text": "Undertale" },
@@ -15,5 +28,8 @@
   { "type": 3, "text": "the Fun Gang" },
   { "type": 4, "text": "Baking a cake" },
   { "type": 4, "text": "Brewing tea" },
-  { "type": 4, "text": "Fighting the titan" }
+  { "type": 4, "text": "Fighting the titan" },
+  { "type": 4, "text": "ralseibot v2. Better than ever."}
 ]
+
+export default statuses;

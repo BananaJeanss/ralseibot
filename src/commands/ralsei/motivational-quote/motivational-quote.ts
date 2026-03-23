@@ -75,7 +75,7 @@ const backgroundImages = fs
 // epic font which is also a PITA
 // https://github.com/Automattic/node-canvas/issues/2285
 // apparently the font has to be installed on your system
-const pathtoFont = path.join(process.cwd(), "./static/deltarune.ttf");
+const pathtoFont = path.join(process.cwd(), "./static/public/assets/deltarune.ttf");
 try {
   console.log("Loading font from:", pathtoFont);
   if (!fs.existsSync(pathtoFont)) {

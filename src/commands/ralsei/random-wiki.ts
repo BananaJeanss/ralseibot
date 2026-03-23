@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 
 export default {
     cooldown: 3,
@@ -6,7 +6,8 @@ export default {
         .setName('random-wiki')
         .setDescription('Gets a random wiki article from the Deltarune Wiki'),
     async execute(interaction: ChatInputCommandInteraction) {
-        const wikiUrl = 'https://deltarune.fandom.com/wiki/Special:Random';
+        // fandom.com sucks
+        const wikiUrl = 'https://deltarune.wiki/wiki/Special:Random';
         
         try {
             const response = await fetch(wikiUrl, {
@@ -20,7 +21,7 @@ export default {
             const finalUrl = response.url;
             
             await interaction.reply({
-                content: `Here's a random Deltarune Wiki article: ${finalUrl}`
+                content: `${finalUrl}`
             });
             
         } catch (error) {

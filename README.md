@@ -1,9 +1,9 @@
 <div align="center">
-<img src="./static/public/assets/hero2.png" alt="Ralseibot Banner" width="70%" />
+<img src="./static/public/assets/hero2.png" alt="Ralseibot Banner" />
 
 <br>
 
-A Discord Bot for all your Ralsei-related needs, built with TypeScript and Discord.js
+A Ralsei/UT|DR themed Discord bot, built with TypeScript and Discord.js
 
 </div>
 
@@ -15,10 +15,7 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Discord.js](https://img.shields.io/badge/discord.js-v14-blue.svg)](https://discord.js.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![GitHub stars](https://img.shields.io/github/stars/BananaJeanss/ralseibot?style=flat&logo=github&color=yellow)](https://github.com/BananaJeanss/ralseibot/stargazers)
-[![Deploy to Nest](https://github.com/BananaJeanss/ralseibot/actions/workflows/main.yml/badge.svg)](https://github.com/BananaJeanss/ralseibot/actions/workflows/main.yml)
 [![Health](https://img.shields.io/badge/dynamic/json?url=https://ralseibot.bnajns.dev/health&query=status&label=status&color=brightgreen&style=flat)](https://ralseibot.bnajns.dev/health)
 
 ---
@@ -173,5 +170,3 @@ This project is licensed under the MIT License, see the [LICENSE](LICENSE) file 
 - **Hero Banner**: [@morxwx](https://x.com/morxwx) on Twitter
 - **Quotes**: [HushBugger/hushbugger.github.io](https://github.com/HushBugger/hushbugger.github.io/tree/master/deltarune/text)
   for in-game quotes/text dump
-
-Made for https://converge.hackclub.com/
