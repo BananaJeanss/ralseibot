@@ -11,7 +11,7 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
 
 [![Discord](https://img.shields.io/badge/Discord%20Server-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/mNaHqRPtKq)
 [![Discord](https://img.shields.io/badge/Bot%20Invite-69ff0f?style=flat&logo=discord&logoColor=black)](https://discord.com/oauth2/authorize?client_id=1388252423197561013)
-[![Website](https://img.shields.io/badge/Website-f9459c?style=flat&logo=globe&logoColor=white)](https://ralseibot.bnajns.hackclub.app)
+[![Website](https://img.shields.io/badge/Website-f9459c?style=flat&logo=globe&logoColor=white)](https://ralseibot.bnajns.dev)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Discord.js](https://img.shields.io/badge/discord.js-v14-blue.svg)](https://discord.js.org/)
@@ -19,7 +19,7 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 [![GitHub stars](https://img.shields.io/github/stars/BananaJeanss/ralseibot?style=flat&logo=github&color=yellow)](https://github.com/BananaJeanss/ralseibot/stargazers)
 [![Deploy to Nest](https://github.com/BananaJeanss/ralseibot/actions/workflows/main.yml/badge.svg)](https://github.com/BananaJeanss/ralseibot/actions/workflows/main.yml)
-[![Health](https://img.shields.io/badge/dynamic/json?url=https://ralseibot.bnajns.hackclub.app/health&query=status&label=status&color=brightgreen&style=flat)](https://ralseibot.bnajns.hackclub.app/health)
+[![Health](https://img.shields.io/badge/dynamic/json?url=https://ralseibot.bnajns.dev/health&query=status&label=status&color=brightgreen&style=flat)](https://ralseibot.bnajns.dev/health)
 
 ---
 

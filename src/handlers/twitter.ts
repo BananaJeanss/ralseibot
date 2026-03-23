@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import yaml from 'yaml';
 import { chromium } from 'playwright';
 
 export interface TweetResult {
@@ -38,7 +37,7 @@ export class TwitterHandler {
       path.join(process.cwd(), 'sources.yaml'),
       'utf8',
     );
-    this.config = yaml.parse(configFile);
+    this.config = Bun.YAML.parse(configFile);
   }
 
   private weightedRandom<T extends { weight?: number }>(sources: T[]): T {
@@ -62,7 +61,7 @@ export class TwitterHandler {
     const page = await browser.newPage();
 
     try {
-      await page.goto(`https://twitter.com/${username}`, {
+      await page.goto(`https://x.com/${username}`, {
         waitUntil: 'domcontentloaded',
       });
 
@@ -83,7 +82,7 @@ export class TwitterHandler {
           const text = textDiv ? textDiv.innerText : '';
           const linkEl = article.querySelector('a[href*="/status/"]');
           const url = linkEl
-            ? `https://twitter.com${linkEl.getAttribute('href')}`
+            ? `https://x.com${linkEl.getAttribute('href')}`
             : '';
           // exclude profile pics
           const mediaUrls = Array.from(article.querySelectorAll('img'))

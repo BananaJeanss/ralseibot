@@ -6,20 +6,29 @@ import {
 import { RedditHandler } from "../../handlers/reddit.js";
 import { TwitterHandler } from "../../handlers/twitter.js";
 import { Filter } from "bad-words";
-import yaml from "yaml";
 import fs from "fs";
 import path from "path";
+import { BlueskyHandler } from "../../handlers/bluesky.js";
+
+export interface RalseiPost {
+  title?: string;
+  sourceUrl: string;
+  sourceName: string;
+  author: string;
+  mediaUrls?: string[];
+  url?: string;
+}
 
 interface UnifiedSource {
   name: string;
   url: string;
   weight: number;
-  type: "reddit" | "twitter";
+  type: "twitter" | "bsky" | "reddit";
 }
 
 function loadSources(): UnifiedSource[] {
   const configPath = path.join(process.cwd(), "sources.yaml");
-  const config = yaml.parse(fs.readFileSync(configPath, "utf8"));
+  const config = Bun.YAML.parse(fs.readFileSync(configPath, "utf8")) as any;
 
   const redditSources = (config.sources.reddit || []).map((src: any) => ({
     ...src,
@@ -33,7 +42,13 @@ function loadSources(): UnifiedSource[] {
     weight: src.weight || 1,
   }));
 
-  return [...redditSources, ...twitterSources];
+  const blueskySources = (config.sources.bsky || []).map((src: any) => ({
+    ...src,
+    type: "bsky",
+    weight: src.weight || 1,
+  }));
+
+  return [...redditSources, ...twitterSources, ...blueskySources];
 }
 
 function weightedRandom<T extends { weight: number }>(items: T[]): T {
@@ -69,6 +84,8 @@ export default {
           result = await RedditHandler.getInstance().fetchImage();
         } else if (selected.type === "twitter") {
           result = await TwitterHandler.getInstance().fetchTweet();
+        } else if (selected.type === "bsky") {
+          result = await new BlueskyHandler().fetchPost();
         }
 
         // bad-words filter check, this will not count towards retries
@@ -90,8 +107,6 @@ export default {
         });
         return;
       }
-
-
 
       const embed = new EmbedBuilder()
         .setTitle(result.title || "Ralsei Post")

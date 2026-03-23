@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import yaml from "yaml";
 import { config } from "dotenv";
 config();
 
@@ -62,7 +61,7 @@ export class RedditHandler {
     try {
       const configPath = path.join(process.cwd(), "sources.yaml");
       const configFile = fs.readFileSync(configPath, "utf8");
-      this.config = yaml.parse(configFile);
+      this.config = Bun.YAML.parse(configFile);
     } catch (error) {
       console.error("Failed to load sources.yaml:", error);
       throw error;
