@@ -186,9 +186,9 @@ export default {
         }
       });
 
-      player.on("error", (e) => console.error("[radio] player error:", e));
+      player.on("error", (e: any) => console.error("[radio] player error:", e));
 
-      connection.on("error", (e) => {
+      connection.on("error", (e: any) => {
         console.error("[radio] connection error:", e);
         player.stop(true);
         connection.destroy();

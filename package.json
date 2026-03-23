@@ -19,7 +19,7 @@
   "description": "A Discord Bot for all your Ralsei-related needs, built with TypeScript and Discord.js",
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
-    "@discordjs/voice": "^0.19.0",
+    "@discordjs/voice": "^0.19.2",
     "@snazzah/davey": "^0.1.6",
     "bad-words": "^4.0.0",
     "canvas": "^3.1.2",
