@@ -7,3 +7,6 @@ dist
 # ignore extracted sprites from spritesheet
 **/individual_sprites/
 quotes.json
+
+# post sources
+sources.yaml

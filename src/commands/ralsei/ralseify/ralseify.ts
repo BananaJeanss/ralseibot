@@ -4,7 +4,7 @@ import {
   AttachmentBuilder,
 } from "discord.js";
 import path from "path";
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas, loadImage } from "@napi-rs/canvas";
 
 export default {
   data: new SlashCommandBuilder()

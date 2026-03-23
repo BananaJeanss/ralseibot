@@ -6,9 +6,8 @@
   "scripts": {
     "build": "bun --bun tsc --noEmit",
     "extract-sprites": ".venv/bin/python ./static/sprites/extract-sprites.py",
-    "start": "bun --bun dist/index.js",
+    "start": "bun --bun src/index.ts",
     "deploy-commands": "bun --bun dist/deploy-commands.js",
-    "dev": "bun --watch src/index.ts",
     "watch": "bun --bun tsc --watch",
     "lint": "eslint . --ext .ts,.js",
     "lint:fix": "eslint . --ext .ts,.js --fix"
@@ -20,9 +19,9 @@
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.19.2",
+    "@napi-rs/canvas": "^0.1.97",
     "@snazzah/davey": "^0.1.6",
     "bad-words": "^4.0.0",
-    "canvas": "^3.1.2",
     "discord.js": "^14.21.0",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",

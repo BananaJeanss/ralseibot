@@ -1,12 +1,12 @@
 import { SlashCommandBuilder, AttachmentBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { createCanvas, loadImage, registerFont } from 'canvas';
+import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 import path from 'node:path';
 import fs from 'node:fs';
 
 // custom font registration
 const fontPath = path.join(process.cwd(), 'static', 'textboxsprites', 'determination-mono.ttf');
 if (fs.existsSync(fontPath)) {
-  registerFont(fontPath, { family: 'DeterminationMono' });
+  GlobalFonts.registerFromPath(fontPath, 'DeterminationMono');
 }
 
 export default {

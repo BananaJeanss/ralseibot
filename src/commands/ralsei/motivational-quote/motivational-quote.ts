@@ -1,6 +1,7 @@
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas, loadImage, GlobalFonts } from "@napi-rs/canvas";
 import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import fs from "fs";
+import path from "path";
 
 const motivationalQuotes = [
   "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle.",
@@ -68,8 +69,24 @@ const backgroundImages = fs
   .readdirSync("./src/commands/ralsei/motivational-quote/backgrounds")
   .filter(
     (file) =>
-      file.endsWith(".png") || file.endsWith(".jpg") || file.endsWith(".jpeg")
+      file.endsWith(".png") || file.endsWith(".jpg") || file.endsWith(".jpeg"),
   );
+
+// epic font which is also a PITA
+// https://github.com/Automattic/node-canvas/issues/2285
+// apparently the font has to be installed on your system
+const pathtoFont = path.join(process.cwd(), "./static/deltarune.ttf");
+try {
+  console.log("Loading font from:", pathtoFont);
+  if (!fs.existsSync(pathtoFont)) {
+    throw new Error("Font file not found");
+  } else {
+    GlobalFonts.registerFromPath(pathtoFont, "Deltarune");
+  }
+} catch (error) {
+  console.error("Error loading font:", error);
+  process.exit(1);
+}
 
 export default {
   cooldown: 5,
@@ -87,15 +104,29 @@ export default {
 
     // Load the background image
     const background = await loadImage(
-      `./src/commands/ralsei/motivational-quote/backgrounds/${backgroundImage}`
+      `./src/commands/ralsei/motivational-quote/backgrounds/${backgroundImage}`,
     );
-    ctx.drawImage(background, 0, 0, canvasSize, canvasSize);
+
+    // draw in cover style, otherwise it gets stretched to fit
+    const scale = Math.max(
+      canvasSize / background.width,
+      canvasSize / background.height,
+    );
+    const drawx = (canvasSize - background.width * scale) / 2;
+    const drawy = (canvasSize - background.height * scale) / 2;
+    ctx.drawImage(
+      background,
+      drawx,
+      drawy,
+      background.width * scale,
+      background.height * scale,
+    );
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Semi-transparent overlay
     ctx.fillRect(0, 0, canvasSize, canvasSize);
 
     // Set text properties
     ctx.fillStyle = "white";
-    ctx.font = "bold 28px 'Franklin Gothic Medium'"
+    ctx.font = "28px 'Deltarune'";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 

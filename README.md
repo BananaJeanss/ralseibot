@@ -73,6 +73,7 @@ A Discord Bot for all your Ralsei-related needs, built with TypeScript and Disco
 
    ```bash
    cp .env.example .env
+   cp source.yaml.example sources.yaml
    ```
 
 > [!IMPORTANT]  

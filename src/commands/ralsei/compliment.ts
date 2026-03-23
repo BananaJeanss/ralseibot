@@ -5,7 +5,6 @@ import {
 } from "discord.js";
 
 const compliments = [
-  // Ralsei-style compliments
   "You're as fluffy and kind as Ralsei himself!",
   "Your heart shines brighter than a Dark Fountain!",
   "You have the determination of a true Lightner!",
