@@ -2,8 +2,7 @@
 // i couldve done this with curl but nahhh
 import { AtpAgent, ModerationOpts } from "@atproto/api";
 import { moderatePost, ModerationPrefs } from "@atproto/api";
-import { YAML } from "bun";
-import path from "path/win32";
+import path from "node:path";
 import fs from "fs";
 import { RalseiPost } from "../commands/ralsei/ralsei";
 
@@ -86,8 +85,12 @@ export class BlueskyHandler {
 
   // fetch a singular random post from either feed or user, refer to yaml for weights
   public async fetchPost() {
-    const sources = YAML.parse(
-      fs.readFileSync(path.join(import.meta.dir, "sources.yaml"), "utf-8"),
+    const sources = Bun.YAML.parse(
+      // idk why but it keeps giving backslashes for some reason
+      fs.readFileSync(
+        path.join(process.cwd(), "sources.yaml"),
+        "utf-8",
+      ),
     ) as any;
     const blueskySources = sources.sources.bsky || [];
     if (blueskySources.length === 0) {
@@ -130,7 +133,10 @@ export class BlueskyHandler {
       let builder: RalseiPost = {
         title: randomPost.post.record.text,
         sourceUrl: `https://bsky.app/profile/${selected.handle}/post/${randomPost.post.uri.split("/").pop()}`,
-        mediaUrls: (randomPost.post.embed as any)?.images?.map((img: any) => img.fullsize) || [],
+        mediaUrls:
+          (randomPost.post.embed as any)?.images?.map(
+            (img: any) => img.fullsize,
+          ) || [],
         sourceName: selected.name,
         author: randomPost.post.author.handle,
       };
@@ -148,7 +154,10 @@ export class BlueskyHandler {
       let builder: RalseiPost = {
         title: randomPost.post.record.text,
         sourceUrl: `https://bsky.app/profile/${selected.handle}/post/${randomPost.post.uri.split("/").pop()}`,
-        mediaUrls: (randomPost.post.embed as any)?.images?.map((img: any) => img.fullsize) || [],
+        mediaUrls:
+          (randomPost.post.embed as any)?.images?.map(
+            (img: any) => img.fullsize,
+          ) || [],
         sourceName: selected.name,
         author: randomPost.post.author.handle,
       };
