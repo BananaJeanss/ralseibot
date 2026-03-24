@@ -191,8 +191,11 @@ export default {
         randTrack = songNames[Math.floor(Math.random() * songNames.length)];
       }
 
+      let disconnectHandled = false;
       // disconnect handler
       async function disconnectedFromVc() {
+        if (disconnectHandled) return; // already handled by voiceStateUpdate
+        disconnectHandled = true;
         // destroy connection if disconnected aka kicked
         player.stop(true);
         await interaction.followUp("🔇 Disconnected from the voice channel.");
@@ -207,15 +210,11 @@ export default {
       }
 
       // register VoiceStateUpdate listener
-      let disconnectHandled = false;
       const voiceStateHandler = async () => {
         const membersInChannel = voiceChannel.members.filter(
           (member) => !member.user.bot,
         );
         if (membersInChannel.size === 0) {
-          // no non-bot users left, leave channel and the variable has to be declared
-          // otherwise double message happens
-          disconnectHandled = true;
           await disconnectedFromVc();
         }
       };
@@ -315,7 +314,6 @@ export default {
           // disconnected, cleanup
           console.log("[radio] Disconnected from voice channel");
           isDisconnected = true;
-          if (disconnectHandled) return; // no need for disconnectedFromVc
           await disconnectedFromVc();
         }
       });
