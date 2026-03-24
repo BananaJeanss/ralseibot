@@ -330,12 +330,6 @@ export default {
         }
 
         await playTrack(); // play next random track
-
-        // add to history
-        if (!perServerHistory[guild.id]) {
-          perServerHistory[guild.id] = [];
-        }
-        perServerHistory[guild.id].push(randTrack);
       });
 
       player.on("error", (e: any) => console.error("[radio] player error:", e));
