@@ -87,7 +87,7 @@ export class BlueskyHandler {
   // fetch a singular random post from either feed or user, refer to yaml for weights
   public async fetchPost() {
     const sources = YAML.parse(
-      fs.readFileSync(path.join(process.cwd(), "sources.yaml"), "utf-8"),
+      fs.readFileSync(path.join(import.meta.dir, "sources.yaml"), "utf-8"),
     ) as any;
     const blueskySources = sources.sources.bsky || [];
     if (blueskySources.length === 0) {
