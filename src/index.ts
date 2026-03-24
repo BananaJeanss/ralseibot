@@ -12,6 +12,7 @@ import { envCheck } from "./events/envCheck.js";
 import { fileURLToPath } from "node:url";
 import { pathToFileURL } from "node:url";
 import { startServer } from "./site/express.js";
+import { serveMetrics } from "./metrics.js";
 
 envCheck();
 
@@ -68,6 +69,7 @@ async function loadCommands(dir: string) {
   }
 }
 
+// events handler
 async function loadEvents() {
   const eventsPath = path.join(__dirname, "events");
   const eventFiles = fs
@@ -108,6 +110,11 @@ async function main() {
   if (runMode === "site" || runMode === "dual") {
     console.log("🕸️ Starting express site");
     startServer();
+  }
+
+  if (process.env.PROMETHEUS_ENABLED === "true") {
+    // no console.log needed servemetrics already does that
+    serveMetrics();
   }
 }
 

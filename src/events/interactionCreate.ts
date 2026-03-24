@@ -1,4 +1,5 @@
-import { Events, MessageFlags, Collection } from 'discord.js';
+import { Events, MessageFlags, Collection } from "discord.js";
+import { CommandDuration, CommandErrorCount } from "../metrics";
 
 export default {
   name: Events.InteractionCreate,
@@ -18,6 +19,9 @@ export default {
     if (!interaction.isChatInputCommand()) return;
 
     const command = interaction.client.commands.get(interaction.commandName);
+
+    // track time
+    const commandStart = Date.now();
 
     if (!command) {
       console.error(
@@ -55,20 +59,25 @@ export default {
     setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
     try {
-      console.log(`> Command /${command.data.name} executed by @${interaction.user.tag} at ${new Date().toLocaleTimeString()}`);
+      console.log(
+        `> Command /${command.data.name} executed by @${interaction.user.tag} at ${new Date().toLocaleTimeString()}`,
+      );
       await command.execute(interaction);
-    }
- catch (error) {
+      // tracks usage and time to execute at same time
+      CommandDuration.labels(command.data.name).observe(
+        (Date.now() - commandStart) / 1_000,
+      );
+    } catch (error) {
       console.error(error);
+      CommandErrorCount.inc({ command: command.data.name });
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
-          content: 'There was an error while executing this command!',
+          content: "There was an error while executing this command!",
           flags: MessageFlags.Ephemeral,
         });
-      }
- else {
+      } else {
         await interaction.reply({
-          content: 'There was an error while executing this command!',
+          content: "There was an error while executing this command!",
           flags: MessageFlags.Ephemeral,
         });
       }

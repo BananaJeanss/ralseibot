@@ -77,7 +77,6 @@ const backgroundImages = fs
 // apparently the font has to be installed on your system
 const pathtoFont = path.join(process.cwd(), "./static/public/assets/deltarune.ttf");
 try {
-  console.log("Loading font from:", pathtoFont);
   if (!fs.existsSync(pathtoFont)) {
     throw new Error("Font file not found");
   } else {

@@ -14,6 +14,7 @@ import {
 } from "@discordjs/voice";
 import path from "node:path";
 import fs from "node:fs";
+import { RadioUsers } from "../../../metrics";
 
 let perServerHistory: { [guildId: string]: string[] } = {};
 let perServerNowPlaying: { [guildId: string]: string } = {};
@@ -25,20 +26,22 @@ export default {
     .setName("radio")
     .setDescription("Joins a voice channel and plays music")
     .addSubcommand((subcommand) =>
-      subcommand.setName("nowplaying").setDescription("Shows the current track")
+      subcommand
+        .setName("nowplaying")
+        .setDescription("Shows the current track"),
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName("stop").setDescription("Stops the music and leaves")
+      subcommand.setName("stop").setDescription("Stops the music and leaves"),
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName("play")
-        .setDescription("Starts playing music in your voice channel")
+        .setDescription("Starts playing music in your voice channel"),
     )
     .addSubcommand((subcommand) =>
       subcommand
         .setName("history")
-        .setDescription("Shows the radio history for this server")
+        .setDescription("Shows the radio history for this server"),
     ),
   async execute(interaction: ChatInputCommandInteraction) {
     const guild = interaction.guild; // not in guild check
@@ -59,7 +62,7 @@ export default {
         perServerNowPlaying[guild.id] || "No track is playing.";
 
       await interaction.reply(
-        `🎵 Now playing: **${nowplaying}**\n-# Collection of ${songNames.length} songs`
+        `🎵 Now playing: **${nowplaying}**\n-# Collection of ${songNames.length} songs`,
       );
     } else if (interaction.options.getSubcommand() === "stop") {
       const connGuildCheck = getVoiceConnection(guild.id); // check if connected
@@ -68,7 +71,9 @@ export default {
         return;
       }
 
+      // leave vc
       connGuildCheck.destroy();
+      RadioUsers.dec();
       await interaction.reply("⏹️ Stopped playing and left the voice channel.");
     } else if (interaction.options.getSubcommand() === "history") {
       const history = perServerHistory[guild.id];
@@ -98,7 +103,7 @@ export default {
       if (!voiceChannel) {
         // user not in vc
         await interaction.editReply(
-          "❌ You need to be in a voice channel to listen to music, duh."
+          "❌ You need to be in a voice channel to listen to music, duh.",
         );
         return;
       }
@@ -106,7 +111,7 @@ export default {
       const connGuildCheck = getVoiceConnection(guild.id); // check if already connected
       if (connGuildCheck) {
         await interaction.editReply(
-          "❌ I'm already connected to a voice channel in this server."
+          "❌ I'm already connected to a voice channel in this server.",
         );
         return;
       }
@@ -134,8 +139,15 @@ export default {
 
       // i cba to make a downloader script so it'll use static files
       try {
-        songNames = await fs.promises.readdir(path.resolve(process.cwd(), "static", "songs"));
-        songNames = songNames.filter((file) => file.endsWith(".mp3") || file.endsWith(".wav") || file.endsWith(".ogg"));
+        songNames = await fs.promises.readdir(
+          path.resolve(process.cwd(), "static", "songs"),
+        );
+        songNames = songNames.filter(
+          (file) =>
+            file.endsWith(".mp3") ||
+            file.endsWith(".wav") ||
+            file.endsWith(".ogg"),
+        );
       } catch (e) {
         console.error("[radio] Failed to read songs directory:", e);
         await interaction.editReply("❌ No songs found to play.");
@@ -147,7 +159,12 @@ export default {
       const playTrack = () => {
         // create a new resource for each play to avoid issues
         randTrack = songNames[Math.floor(Math.random() * songNames.length)];
-        const pathToTrack = path.resolve(process.cwd(), "static", "songs", randTrack);
+        const pathToTrack = path.resolve(
+          process.cwd(),
+          "static",
+          "songs",
+          randTrack,
+        );
         const resource = createAudioResource(pathToTrack);
         player.play(resource);
 
@@ -165,9 +182,11 @@ export default {
       };
 
       playTrack();
+      // everything succeeded
       await interaction.editReply(
-        `▶️ Now playing from a collection of ${songNames.length} tracks\nCurrent track: **${randTrack}**`
+        `▶️ Now playing from a collection of ${songNames.length} tracks\nCurrent track: **${randTrack}**`,
       );
+      RadioUsers.inc();
 
       // loop track or leave if nobody else in vc
       player.on(AudioPlayerStatus.Idle, () => {
@@ -183,6 +202,8 @@ export default {
         } else {
           player.stop(true);
           connection.destroy();
+          // leave vc
+          RadioUsers.dec();
         }
       });
 
@@ -191,15 +212,17 @@ export default {
       connection.on("error", (e: any) => {
         console.error("[radio] connection error:", e);
         player.stop(true);
+        RadioUsers.dec();
         connection.destroy();
       });
 
       connection.on(VoiceConnectionStatus.Disconnected, async () => {
-        // destroy connection if disconnected
+        // destroy connection if disconnected aka kicked
         player.stop(true);
         await interaction.followUp("🔇 Disconnected from the voice channel.");
         if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
           connection.destroy();
+          RadioUsers.dec();
         }
       });
     }
