@@ -116,6 +116,9 @@ export default {
         return;
       }
 
+      console.log(
+        `[radio] Attempting to join voice channel: ${voiceChannel.name} in guild: ${guild.name}`,
+      );
       const connection = joinVoiceChannel({
         // join vc
         channelId: voiceChannel.id,
@@ -182,14 +185,50 @@ export default {
       };
 
       playTrack();
+      
+      console.log(`[radio] Now playing: ${randTrack}`);
       // everything succeeded
       await interaction.editReply(
         `▶️ Now playing from a collection of ${songNames.length} tracks\nCurrent track: **${randTrack}**`,
       );
       RadioUsers.inc();
 
+      async function disconnectedFromVc() {
+        // destroy connection if disconnected aka kicked
+        player.stop(true);
+        await interaction.followUp("🔇 Disconnected from the voice channel.");
+        if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+          connection.destroy();
+          RadioUsers.dec();
+        }
+      }
+
+      let isDisconnected = false;
+
+      connection.on(VoiceConnectionStatus.Disconnected, async () => {
+        try {
+          await Promise.race([
+            entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+            entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+          ]);
+          console.log("[radio] Moved voice channel");
+          // channel move, ignore
+        } catch {
+          // disconnected, cleanup
+          console.log("[radio] Disconnected from voice channel");
+          isDisconnected = true;
+          player.stop(true);
+          if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+            connection.destroy();
+            RadioUsers.dec();
+          }
+          await interaction.followUp("🔇 Disconnected from the voice channel.");
+        }
+      });
+
       // loop track or leave if nobody else in vc
       player.on(AudioPlayerStatus.Idle, () => {
+        if (isDisconnected) return;
         const stillHere = voiceChannel.members.size > 1;
         if (stillHere) {
           playTrack(); // play next random track
@@ -200,10 +239,7 @@ export default {
           }
           perServerHistory[guild.id].push(randTrack);
         } else {
-          player.stop(true);
-          connection.destroy();
-          // leave vc
-          RadioUsers.dec();
+          disconnectedFromVc();
         }
       });
 
@@ -214,16 +250,6 @@ export default {
         player.stop(true);
         RadioUsers.dec();
         connection.destroy();
-      });
-
-      connection.on(VoiceConnectionStatus.Disconnected, async () => {
-        // destroy connection if disconnected aka kicked
-        player.stop(true);
-        await interaction.followUp("🔇 Disconnected from the voice channel.");
-        if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
-          connection.destroy();
-          RadioUsers.dec();
-        }
       });
     }
   },
