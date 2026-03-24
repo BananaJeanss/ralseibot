@@ -9,6 +9,7 @@ import { Filter } from "bad-words";
 import fs from "fs";
 import path from "path";
 import { BlueskyHandler } from "../../handlers/bluesky.js";
+import { HandlerTime } from "../../metrics.js";
 
 export interface RalseiPost {
   title?: string;
@@ -71,6 +72,8 @@ export default {
   async execute(interaction: CommandInteraction) {
     await interaction.deferReply();
 
+    const startTime = Date.now();
+
     const sources = loadSources();
     const selected = weightedRandom(sources);
     const filter = new Filter();
@@ -92,7 +95,7 @@ export default {
         // if the result is profane, retry
         if (result && filter.isProfane(result.title || "")) {
           console.warn(
-            `Filtered out profane content from ${selected.name}: ${result.title}`
+            `Filtered out profane content from ${selected.name}: ${result.title}`,
           );
           result = null;
         }
@@ -121,6 +124,11 @@ export default {
       } else if (result.url) {
         embed.setImage(result.url);
       }
+
+      const endTime = Date.now();
+      HandlerTime.labels({ handler: selected.type }).observe(
+        (endTime - startTime) / 1000,
+      );
 
       await interaction.editReply({ embeds: [embed] });
     } catch (err) {
