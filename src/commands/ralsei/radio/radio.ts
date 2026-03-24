@@ -21,6 +21,30 @@ let perServerNowPlaying: { [guildId: string]: string } = {};
 
 let songNames: string[] = [];
 
+// if TsRadio url provided, use that, otherwise its just static files
+const TsRadioUrl = Bun.env.TS_RADIO_URL;
+
+interface TsRadioMetadata {
+  title: string;
+  artist: string;
+  album: string;
+  length: number; // in seconds
+  genre: string;
+}
+
+class TsRadioHandler {
+  constructor() {
+    // nothing to construct brochacho
+  }
+
+  async getCurrentInfo() {
+    const data = (await fetch(TsRadioUrl + "/metadata").then((res) =>
+      res.json(),
+    )) as TsRadioMetadata;
+    return data;
+  }
+}
+
 export default {
   data: new SlashCommandBuilder()
     .setName("radio")
@@ -61,9 +85,10 @@ export default {
       const nowplaying =
         perServerNowPlaying[guild.id] || "No track is playing.";
 
-      await interaction.reply(
-        `🎵 Now playing: **${nowplaying}**\n-# Collection of ${songNames.length} songs`,
-      );
+      let sourceText = TsRadioUrl ? "Radio Stream" : `Collection of ${songNames.length} songs`;
+      let nowPlayingText = `🎵 Now playing: **${nowplaying}**\n-# ${sourceText}`;
+
+      await interaction.reply(nowPlayingText);
     } else if (interaction.options.getSubcommand() === "stop") {
       const connGuildCheck = getVoiceConnection(guild.id); // check if connected
       if (!connGuildCheck) {
@@ -119,6 +144,7 @@ export default {
       console.log(
         `[radio] Attempting to join voice channel: ${voiceChannel.name} in guild: ${guild.name}`,
       );
+
       const connection = joinVoiceChannel({
         // join vc
         channelId: voiceChannel.id,
@@ -141,25 +167,49 @@ export default {
       connection.subscribe(player);
 
       // i cba to make a downloader script so it'll use static files
-      try {
-        songNames = await fs.promises.readdir(
-          path.resolve(process.cwd(), "static", "songs"),
-        );
-        songNames = songNames.filter(
-          (file) =>
-            file.endsWith(".mp3") ||
-            file.endsWith(".wav") ||
-            file.endsWith(".ogg"),
-        );
-      } catch (e) {
-        console.error("[radio] Failed to read songs directory:", e);
-        await interaction.editReply("❌ No songs found to play.");
-        connection.destroy();
-        return;
+      let randTrack = "";
+      if (!TsRadioUrl) {
+        try {
+          songNames = await fs.promises.readdir(
+            path.resolve(process.cwd(), "static", "songs"),
+          );
+          songNames = songNames.filter(
+            (file) =>
+              file.endsWith(".mp3") ||
+              file.endsWith(".wav") ||
+              file.endsWith(".ogg"),
+          );
+        } catch (e) {
+          console.error("[radio] Failed to read songs directory:", e);
+          await interaction.editReply("❌ No songs found to play.");
+          connection.destroy();
+          return;
+        }
+        randTrack = songNames[Math.floor(Math.random() * songNames.length)];
       }
-      let randTrack = songNames[Math.floor(Math.random() * songNames.length)];
 
-      const playTrack = () => {
+      const playTrack = async () => {
+        if (TsRadioUrl) {
+          const tsRadio = new TsRadioHandler();
+          const resource = createAudioResource(TsRadioUrl + "/stream");
+          player.play(resource);
+          // set now playing
+          perServerNowPlaying[guild.id] = await tsRadio
+            .getCurrentInfo()
+            .then((info) => `${info.artist} - ${info.title}`);
+          if (!perServerHistory[guild.id]) {
+            perServerHistory[guild.id] = [];
+          }
+
+          // add to history & clear out old entries
+          perServerHistory[guild.id].push(perServerNowPlaying[guild.id]);
+          if (perServerHistory[guild.id].length >= 11) {
+            perServerHistory[guild.id].shift();
+          }
+          return;
+        }
+
+        // else play from static files
         // create a new resource for each play to avoid issues
         randTrack = songNames[Math.floor(Math.random() * songNames.length)];
         const pathToTrack = path.resolve(
@@ -184,12 +234,34 @@ export default {
         }
       };
 
-      playTrack();
-      
-      console.log(`[radio] Now playing: ${randTrack}`);
+      await playTrack();
+
+      // since TsRadio is a continuous stream, we'll have to poll for metadata updates
+      const metadataPoll = setInterval(async () => {
+        const tsRadio = new TsRadioHandler();
+        const currentInfo = await tsRadio.getCurrentInfo();
+        const currentTrack = `${currentInfo.artist} - ${currentInfo.title}`;
+        // if track changed, update now playing and history
+        if (currentTrack !== perServerNowPlaying[guild.id]) {
+          perServerNowPlaying[guild.id] = currentTrack;
+          // add to history & clear out old entries
+          if (!perServerHistory[guild.id]) {
+            perServerHistory[guild.id] = [];
+          }
+          perServerHistory[guild.id].push(currentTrack);
+          if (perServerHistory[guild.id].length >= 11) {
+            perServerHistory[guild.id].shift();
+          }
+          console.log(`[radio] Now playing: ${currentTrack}`);
+        }
+      }, 60_000); // poll every 60 seconds
+
+      console.log(`[radio] Now playing: ${perServerNowPlaying[guild.id]}`);
+
       // everything succeeded
+      let sourceText = TsRadioUrl ? "Radio Stream" : `Collection of ${songNames.length} songs`;
       await interaction.editReply(
-        `▶️ Now playing from a collection of ${songNames.length} tracks\nCurrent track: **${randTrack}**`,
+        `▶️ Now playing from ${sourceText}\nCurrent track: **${perServerNowPlaying[guild.id]}**`,
       );
       RadioUsers.inc();
 
@@ -197,6 +269,9 @@ export default {
         // destroy connection if disconnected aka kicked
         player.stop(true);
         await interaction.followUp("🔇 Disconnected from the voice channel.");
+        if (Bun.env.TS_RADIO_URL) {
+          clearInterval(metadataPoll);
+        }
         if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
           connection.destroy();
           RadioUsers.dec();
@@ -217,21 +292,24 @@ export default {
           // disconnected, cleanup
           console.log("[radio] Disconnected from voice channel");
           isDisconnected = true;
-          player.stop(true);
-          if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
-            connection.destroy();
-            RadioUsers.dec();
-          }
-          await interaction.followUp("🔇 Disconnected from the voice channel.");
+          await disconnectedFromVc();
         }
       });
 
       // loop track or leave if nobody else in vc
-      player.on(AudioPlayerStatus.Idle, () => {
+      // with TsRadioUrl this would never happen as its a continuous ffmpeg stream
+      player.on(AudioPlayerStatus.Idle, async () => {
         if (isDisconnected) return;
         const stillHere = voiceChannel.members.size > 1;
         if (stillHere) {
-          playTrack(); // play next random track
+          if (TsRadioUrl) {
+            console.warn(
+              "This shouldn't have happened, TsRadioUrl is set but player went idle",
+            );
+            return;
+          }
+
+          await playTrack(); // play next random track
 
           // add to history
           if (!perServerHistory[guild.id]) {
@@ -239,7 +317,7 @@ export default {
           }
           perServerHistory[guild.id].push(randTrack);
         } else {
-          disconnectedFromVc();
+          await disconnectedFromVc();
         }
       });
 
