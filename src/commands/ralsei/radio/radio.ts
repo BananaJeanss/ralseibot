@@ -2,6 +2,7 @@ import {
   SlashCommandBuilder,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  Events,
 } from "discord.js";
 import {
   joinVoiceChannel,
@@ -85,7 +86,9 @@ export default {
       const nowplaying =
         perServerNowPlaying[guild.id] || "No track is playing.";
 
-      let sourceText = TsRadioUrl ? "Radio Stream" : `Collection of ${songNames.length} songs`;
+      let sourceText = TsRadioUrl
+        ? "Radio Stream"
+        : `Collection of ${songNames.length} songs`;
       let nowPlayingText = `🎵 Now playing: **${nowplaying}**\n-# ${sourceText}`;
 
       await interaction.reply(nowPlayingText);
@@ -188,6 +191,37 @@ export default {
         randTrack = songNames[Math.floor(Math.random() * songNames.length)];
       }
 
+      // disconnect handler
+      async function disconnectedFromVc() {
+        // destroy connection if disconnected aka kicked
+        player.stop(true);
+        await interaction.followUp("🔇 Disconnected from the voice channel.");
+        if (Bun.env.TS_RADIO_URL) {
+          clearInterval(metadataPoll);
+        }
+        if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+          connection.destroy();
+          RadioUsers.dec();
+          interaction.client.off(Events.VoiceStateUpdate, voiceStateHandler);
+        }
+      }
+
+      // register VoiceStateUpdate listener
+      let disconnectHandled = false;
+      const voiceStateHandler = async () => {
+        const membersInChannel = voiceChannel.members.filter(
+          (member) => !member.user.bot,
+        );
+        if (membersInChannel.size === 0) {
+          // no non-bot users left, leave channel and the variable has to be declared
+          // otherwise double message happens
+          disconnectHandled = true;
+          await disconnectedFromVc();
+        }
+      };
+
+      interaction.client.on(Events.VoiceStateUpdate, voiceStateHandler);
+
       const playTrack = async () => {
         if (TsRadioUrl) {
           const tsRadio = new TsRadioHandler();
@@ -259,24 +293,13 @@ export default {
       console.log(`[radio] Now playing: ${perServerNowPlaying[guild.id]}`);
 
       // everything succeeded
-      let sourceText = TsRadioUrl ? "Radio Stream" : `Collection of ${songNames.length} songs`;
+      let sourceText = TsRadioUrl
+        ? "Radio Stream"
+        : `Collection of ${songNames.length} songs`;
       await interaction.editReply(
         `▶️ Now playing from ${sourceText}\nCurrent track: **${perServerNowPlaying[guild.id]}**`,
       );
       RadioUsers.inc();
-
-      async function disconnectedFromVc() {
-        // destroy connection if disconnected aka kicked
-        player.stop(true);
-        await interaction.followUp("🔇 Disconnected from the voice channel.");
-        if (Bun.env.TS_RADIO_URL) {
-          clearInterval(metadataPoll);
-        }
-        if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
-          connection.destroy();
-          RadioUsers.dec();
-        }
-      }
 
       let isDisconnected = false;
 
@@ -292,6 +315,7 @@ export default {
           // disconnected, cleanup
           console.log("[radio] Disconnected from voice channel");
           isDisconnected = true;
+          if (disconnectHandled) return; // no need for disconnectedFromVc
           await disconnectedFromVc();
         }
       });
@@ -300,25 +324,20 @@ export default {
       // with TsRadioUrl this would never happen as its a continuous ffmpeg stream
       player.on(AudioPlayerStatus.Idle, async () => {
         if (isDisconnected) return;
-        const stillHere = voiceChannel.members.size > 1;
-        if (stillHere) {
-          if (TsRadioUrl) {
-            console.warn(
-              "This shouldn't have happened, TsRadioUrl is set but player went idle",
-            );
-            return;
-          }
-
-          await playTrack(); // play next random track
-
-          // add to history
-          if (!perServerHistory[guild.id]) {
-            perServerHistory[guild.id] = [];
-          }
-          perServerHistory[guild.id].push(randTrack);
-        } else {
-          await disconnectedFromVc();
+        if (TsRadioUrl) {
+          console.warn(
+            "This shouldn't have happened, TsRadioUrl is set but player went idle",
+          );
+          return;
         }
+
+        await playTrack(); // play next random track
+
+        // add to history
+        if (!perServerHistory[guild.id]) {
+          perServerHistory[guild.id] = [];
+        }
+        perServerHistory[guild.id].push(randTrack);
       });
 
       player.on("error", (e: any) => console.error("[radio] player error:", e));
