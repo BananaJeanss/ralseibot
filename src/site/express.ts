@@ -1,37 +1,34 @@
-import { config } from "dotenv";
-config();
-
-import express, { Request, Response } from 'express';
-import path from 'node:path';
+import express, { Request, Response } from "express";
+import path from "node:path";
 
 const app = express();
-const PORT = process.env.EXPRESS_PORT || 3000;
+const PORT = Bun.env.EXPRESS_PORT || 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(process.cwd(), 'static', 'public')));
+app.use(express.static(path.join(process.cwd(), "static", "public")));
 
 // Routes
-app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(process.cwd(), 'static', 'public', 'index.html'));
+app.get("/", (req: Request, res: Response) => {
+  res.sendFile(path.join(process.cwd(), "static", "public", "index.html"));
 });
 
 // TOS route
-app.get('/terms', (req: Request, res: Response) => {
-  res.sendFile(path.join(process.cwd(), 'static', 'public', 'terms.html'));
+app.get("/terms", (req: Request, res: Response) => {
+  res.sendFile(path.join(process.cwd(), "static", "public", "terms.html"));
 });
 
 // Privacy Policy route
-app.get('/privacy', (req: Request, res: Response) => {
-  res.sendFile(path.join(process.cwd(), 'static', 'public', 'privacy.html'));
+app.get("/privacy", (req: Request, res: Response) => {
+  res.sendFile(path.join(process.cwd(), "static", "public", "privacy.html"));
 });
 
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ 
-    status: 'ok', 
+app.get("/health", (req: Request, res: Response) => {
+  res.json({
+    status: "ok",
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
   });
 });
 

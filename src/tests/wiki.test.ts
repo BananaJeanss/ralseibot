@@ -22,7 +22,7 @@ async function fetchthefetcher(
 // reset with unset WIKI_SEARCH on linux, set WIKI_SEARCH= on windows
 test("fetches a wiki page", async () => {
   // 1. run deltarune test
-  let deltaSearch = process.env.WIKI_SEARCH ?? "Kris";
+  let deltaSearch = Bun.env.WIKI_SEARCH ?? "Kris";
 
   const searchResult = await searchWiki(deltaSearch, "deltarune");
   console.log("🔍 Search result for", deltaSearch, ":", searchResult);
@@ -33,7 +33,7 @@ test("fetches a wiki page", async () => {
   expect(response).not.toBeNull();
 
   // 2. run undertale test
-  let undertaleSearch = process.env.WIKI_SEARCH ?? "Frisk";
+  let undertaleSearch = Bun.env.WIKI_SEARCH ?? "Frisk";
   const utSearchResult = await searchWiki(undertaleSearch, "undertale");
   console.log("🔍 Search result for", undertaleSearch, ":", utSearchResult);
   expect(utSearchResult).not.toBeNull();

@@ -1,5 +1,3 @@
-import { config } from "dotenv";
-config();
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -28,9 +26,11 @@ declare module "discord.js" {
   }
 }
 
-const token = process.env.DISCORD_BOT_TOKEN;
+const token = Bun.env.DISCORD_BOT_TOKEN;
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
+});
 
 client.commands = new Collection();
 client.cooldowns = new Collection(); // store cooldowns for commands
@@ -59,7 +59,7 @@ async function loadCommands(dir: string) {
           console.log(` > Loaded command: ${commandModule.data.name}`);
         } else {
           console.log(
-            `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`
+            `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`,
           );
         }
       } catch (error) {
@@ -85,7 +85,7 @@ async function loadEvents() {
 
       if (eventModule.once) {
         client.once(eventModule.name, (...args) =>
-          eventModule.execute(...args)
+          eventModule.execute(...args),
         );
       } else {
         client.on(eventModule.name, (...args) => eventModule.execute(...args));
@@ -96,7 +96,7 @@ async function loadEvents() {
   }
 }
 
-const runMode = process.env.RUN_MODE || "dual";
+const runMode = Bun.env.RUN_MODE || "dual";
 
 async function main() {
   await loadEvents();
@@ -112,7 +112,7 @@ async function main() {
     startServer();
   }
 
-  if (process.env.PROMETHEUS_ENABLED === "true") {
+  if (Bun.env.PROMETHEUS_ENABLED === "true") {
     // no console.log needed servemetrics already does that
     serveMetrics();
   }

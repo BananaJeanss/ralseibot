@@ -1,10 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { config } from "dotenv";
-config();
-
-const CLIENT_ID = process.env.REDDIT_CLIENT_ID;
-const CLIENT_SECRET = process.env.REDDIT_CLIENT_SECRET;
+const CLIENT_ID = Bun.env.REDDIT_CLIENT_ID;
+const CLIENT_SECRET = Bun.env.REDDIT_CLIENT_SECRET;
 
 interface RedditPost {
   data: {
@@ -82,20 +79,20 @@ export class RedditHandler {
           method: "POST",
           headers: {
             Authorization: `Basic ${Buffer.from(
-              `${CLIENT_ID}:${CLIENT_SECRET}`
+              `${CLIENT_ID}:${CLIENT_SECRET}`,
             ).toString("base64")}`,
             "User-Agent": this.config.settings.default["user-agent"],
             "Content-Type": "application/x-www-form-urlencoded",
           },
           body: "grant_type=client_credentials",
-        }
+        },
       );
 
       if (!response.ok) {
         console.error(
           "Failed to get Reddit access token:",
           response.status,
-          response.statusText
+          response.statusText,
         );
         return null;
       }
@@ -123,7 +120,7 @@ export class RedditHandler {
   private weightedRandom(sources: any[]) {
     const totalWeight = sources.reduce(
       (sum, src) => sum + (src.weight || 1),
-      0
+      0,
     );
     let rand = Math.random() * totalWeight;
     for (const src of sources) {
@@ -179,7 +176,7 @@ export class RedditHandler {
 
       if (!response.ok) {
         console.log(
-          `Response not OK: ${response.status} ${response.statusText}`
+          `Response not OK: ${response.status} ${response.statusText}`,
         );
         return null;
       }
@@ -197,7 +194,7 @@ export class RedditHandler {
 
       // Filter out recently shown posts
       const unseenPosts = filteredPosts.filter(
-        (post) => !this.recentlyShown.has(post.data.permalink)
+        (post) => !this.recentlyShown.has(post.data.permalink),
       );
 
       // If all posts have been seen recently, clear the cache and use all filtered posts
@@ -246,7 +243,7 @@ export class RedditHandler {
 
       const hasImageExtension =
         allowedExtensions.some((ext) =>
-          post.data.url.toLowerCase().includes(`.${ext}`)
+          post.data.url.toLowerCase().includes(`.${ext}`),
         ) || post.data.url.includes("i.redd.it");
 
       if (!hasImageExtension) return false;
@@ -254,7 +251,7 @@ export class RedditHandler {
       // Must mention Ralsei in title
       const titleLower = post.data.title.toLowerCase();
       const hasRalseiKeyword = ralseiKeywords.some((keyword) =>
-        titleLower.includes(keyword.toLowerCase())
+        titleLower.includes(keyword.toLowerCase()),
       );
 
       if (!hasRalseiKeyword && !post.data.url.includes("ralsei")) {
