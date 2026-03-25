@@ -6,7 +6,7 @@ beautifulsoup4==4.13.4
 certifi==2026.2.25
 charset-normalizer==3.4.6
 colorama==0.4.6
-filelock==3.18.0
+filelock==3.20.3
 frozenlist==1.8.0
 git-filter-repo==2.47.0
 idna==3.11
