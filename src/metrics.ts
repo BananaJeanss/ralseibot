@@ -15,14 +15,14 @@ collectDefaultMetrics({ register: registry });
 export const CommandErrorCount = new Counter({
   name: "command_error_count",
   help: "Total number of command errored",
-  labelNames: ["command"],
+  labelNames: ["command", "server_id"],
   registers: [registry],
 });
 
 export const CommandDuration = new Histogram({
   name: "command_duration_seconds",
   help: "Duration of command execution in seconds",
-  labelNames: ["command"],
+  labelNames: ["command", "server_id"],
   buckets: [0.1, 0.5, 1, 2, 5, 10],
   registers: [registry],
 });
@@ -44,6 +44,15 @@ export const HandlerTime = new Histogram({
 export const RadioUsers = new Gauge({
   name: "radio_users",
   help: "Number of users currently listening to the radio",
+  labelNames: ["server_id"],
+  registers: [registry],
+});
+
+export const ExpressRequestTime = new Histogram({
+  name: "express_request_time_seconds",
+  help: "Duration of Express request handling in seconds",
+  labelNames: ["method", "route", "status_code"],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10],
   registers: [registry],
 });
 

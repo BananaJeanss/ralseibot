@@ -101,7 +101,7 @@ export default {
 
       // leave vc
       connGuildCheck.destroy();
-      RadioUsers.dec();
+      RadioUsers.dec({ server_id: guild.id });
       await interaction.reply("⏹️ Stopped playing and left the voice channel.");
     } else if (interaction.options.getSubcommand() === "history") {
       const history = perServerHistory[guild.id];
@@ -204,7 +204,7 @@ export default {
         }
         if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
           connection.destroy();
-          RadioUsers.dec();
+          RadioUsers.dec({ server_id: guild?.id });
           interaction.client.off(Events.VoiceStateUpdate, voiceStateHandler);
         }
       }
@@ -298,7 +298,8 @@ export default {
       await interaction.editReply(
         `▶️ Now playing from ${sourceText}\nCurrent track: **${perServerNowPlaying[guild.id]}**`,
       );
-      RadioUsers.inc();
+
+      RadioUsers.inc({ server_id: guild.id });
 
       let isDisconnected = false;
 
@@ -336,9 +337,7 @@ export default {
 
       connection.on("error", (e: any) => {
         console.error("[radio] connection error:", e);
-        player.stop(true);
-        RadioUsers.dec();
-        connection.destroy();
+        disconnectedFromVc();
       });
     }
   },

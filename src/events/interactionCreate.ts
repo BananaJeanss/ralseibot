@@ -15,6 +15,7 @@ export default {
     deferred: any;
     followUp: (arg0: { content: string; flags: any }) => any;
     reply: (arg0: { content: string; flags: any }) => any;
+    guildId: string | null;
   }) {
     if (!interaction.isChatInputCommand()) return;
 
@@ -64,12 +65,16 @@ export default {
       );
       await command.execute(interaction);
       // tracks usage and time to execute at same time
-      CommandDuration.labels(command.data.name).observe(
-        (Date.now() - commandStart) / 1_000,
-      );
+      CommandDuration.labels({
+        command: command.data.name,
+        server_id: interaction.guildId ?? "dm",
+      }).observe((Date.now() - commandStart) / 1_000);
     } catch (error) {
       console.error(error);
-      CommandErrorCount.inc({ command: command.data.name });
+      CommandErrorCount.labels({
+        command: command.data.name,
+        server_id: interaction.guildId ?? "dm",
+      }).inc();
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
           content: "There was an error while executing this command!",
