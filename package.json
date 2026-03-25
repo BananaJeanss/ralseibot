@@ -8,7 +8,7 @@
     "test": "bun --bun test",
     "extract-sprites": ".venv/bin/python ./static/sprites/extract-sprites.py",
     "start": "bun --bun src/index.ts",
-    "deploy-commands": "bun --bun dist/deploy-commands.js",
+    "deploy-commands": "bun --bun src/deploy-commands.js",
     "watch": "bun --bun tsc --watch",
     "lint": "eslint . --ext .ts,.js",
     "lint:fix": "eslint . --ext .ts,.js --fix"

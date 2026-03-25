@@ -25,7 +25,8 @@ async function loadCommands(dir: string) {
     if (stat.isDirectory()) {
       // Recursively search subdirectories
       await loadCommands(itemPath);
-    } else if (item.endsWith('.js')) {
+      // can either be js or ts cause dist is a thing of the past, bun doesn't need to compile
+    } else if (item.endsWith('.js') || item.endsWith('.ts')) { 
       // Load command file using dynamic import
       try {
         const fileUrl = pathToFileURL(itemPath).href;
