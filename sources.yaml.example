@@ -13,6 +13,16 @@ sources:
     - name: "Bi-Hourly Ralsei"
       url: "https://x.com/bihourlyralsei"
       weight: 5
+  bsky:
+    - type: "feed"
+      name: "Deltarune Feed"
+      handle: "inkacorn.bsky.social"
+      feedId: "aaai67z325hgq"
+      weight: 5
+    - type: "user"
+      name: "Daily Ralsei"
+      handle: "ralsei.bsky.social"
+      weight: 5
       
 settings: 
   default:
