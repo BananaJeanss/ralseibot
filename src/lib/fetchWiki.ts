@@ -17,6 +17,18 @@ export function formatNameToWikiUrl(name: string, wiki: "deltarune" | "undertale
   return `https://${wiki}.wiki/api.php?action=parse&page=${name}&format=json`;
 }
 
+export async function randomWikiUrl(wiki: "deltarune" | "undertale"): Promise<string> {
+  const result = await fetch(`https://${wiki}.wiki/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json`);
+  if (!result.ok) {
+    throw new Error(`Failed to fetch random wiki article: ${result.status} ${result.statusText}`);
+  }
+
+  const data: any = await result.json();
+  const articleName = data.query.random[0].title;
+  return articleName;
+}
+
+
 export async function searchWiki(search: string, wiki: "deltarune" | "undertale"): Promise<string | null> {
   // searches wiki, returns the page name for fetchWiki
   const apiUrl = `https://${wiki}.wiki/api.php?action=query&list=search&srsearch=${encodeURIComponent(
