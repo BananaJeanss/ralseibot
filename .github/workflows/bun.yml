@@ -24,6 +24,9 @@ jobs:
       
       - name: Install dependencies
         run: bun ci
+      
+      - name: Copy sources example
+        run: cp sources.yaml.example sources.yaml
 
       - name: Run eslint
         run: bun lint
