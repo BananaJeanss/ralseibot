@@ -3,7 +3,7 @@
 
 <br>
 
-A Ralsei/UT|DR themed Discord bot, built with TypeScript and Discord.js
+A UT/DR focused Discord bot. Textbox Generation, Ralsei Images, Wiki Search, Compliments, and more fun commands!
 
 </div>
 
