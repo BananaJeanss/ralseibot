@@ -6,8 +6,8 @@ export default {
     .setDescription("Flip a coin to decide your fate"),
   async execute(interaction: ChatInputCommandInteraction) {
     const coinEmojis = {
-      heads: "<:lightner:1394598249888743485>",
-      tails: "<:darkner:1394598228514701363>",
+      heads: "<:lightnercoin:1486700259785838602>",
+      tails: "<:darknercoin:1486700248200904795>",
     };
     await interaction.reply("🪙 Flipping the coin...");
     await new Promise((resolve) => setTimeout(resolve, 3000));
