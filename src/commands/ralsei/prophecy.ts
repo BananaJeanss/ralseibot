@@ -20,15 +20,15 @@ export default {
     .addAttachmentOption((option) =>
       option
         .setName("image")
-        .setDescription("The prophecy image")
-        .setRequired(false),
+        .setDescription("The prophecy image (Must be monochrome)")
+        .setRequired(true),
     ),
   async execute(interaction: ChatInputCommandInteraction) {
     // ack
     await interaction.deferReply();
 
     const text = interaction.options.getString("text", true);
-    const image = interaction.options.getAttachment("image", false);
+    const image = interaction.options.getAttachment("image", true);
 
     const width = 500;
     const height = 500;
@@ -106,23 +106,27 @@ export default {
 
     // zoom the image and choose random position
     const zoom = 0.5;
-    const overlaySpeed = 5; // source-px to scroll per frame
     // positive = content scrolls left/up, negative = content scrolls right/down
     const panDirX = 1;  // towards left
     const panDirY = 1;  // towards top
-    const totalFrames = 48; // 42/2 = 2 seconds at 24
-    const travel = totalFrames * overlaySpeed;
+    const totalFrames = 120; // 24 fps * n seconds
+    // travel exactly one tile per loop so the tiled texture stitches seamlessly
+    const overlaySpeed = IMAGE_DEPTHS.width / totalFrames;
+    const travel = IMAGE_DEPTHS.width; // = totalFrames * overlaySpeed
     // offset baseX/baseY so the crop window stays in bounds regardless of direction
     const baseX = travel * Math.max(0, -panDirX) + Math.random() * (tiledW - width  / zoom - travel * Math.abs(panDirX));
     const baseY = travel * Math.max(0, -panDirY) + Math.random() * (tiledH - height / zoom - travel * Math.abs(panDirY));
 
-    const bobSpeed = 1;
+    const bobSpeed = 2;    // integer cycles per loop
     const bobAmplitude = 15; // px up/down
+    const ghostSpeed = 2;  // must also be integer for smooth loop
+    const ghostAmplitude = 10; // px diagonal offset per ghost level
     const imageWidth = 250;
     const imageHeight = 250;
     const lines = text.split(/\\n|\n/);
     const lineHeight = 50;
 
+    // gif cook time
     const encoder = new GIFEncoder(width, height);
     encoder.setDelay(50); // 100ms = 10fps
     encoder.setRepeat(0); // loop forever
@@ -133,6 +137,8 @@ export default {
     const ctx = canvas.getContext("2d");
     const iconCanvas = createCanvas(width, height);
     const iconCtx = iconCanvas.getContext("2d");
+    const ghostCanvas = createCanvas(width, height);
+    const ghostCtx = ghostCanvas.getContext("2d");
 
     for (let frame = 0; frame < totalFrames; frame++) {
       const t = frame / totalFrames;
@@ -145,6 +151,7 @@ export default {
       // clear canvases
       ctx.clearRect(0, 0, width, height);
       iconCtx.clearRect(0, 0, width, height);
+      ghostCtx.clearRect(0, 0, width, height);
 
       // draw subject image with sine offset
       iconCtx.drawImage(
@@ -182,8 +189,65 @@ export default {
       );
       iconCtx.globalCompositeOperation = "source-over";
 
-      // draw icon
+      // ghost the icon part boom
+      // how much offset from center (goes top left then center then bottom right)
+      const offset1 = Math.sin(t * 2 * Math.PI * ghostSpeed) * ghostAmplitude;
+
+      // ghost 2 — double offset, least opaque
+      ghostCtx.globalAlpha = 0.2;
+      ghostCtx.drawImage(
+        subjectCanvas,
+        width / 2 - imageWidth / 2 + offset1 * 2,
+        height / 2 - imageHeight / 2 + 25 + yOffset + offset1 * 2,
+        imageWidth,
+        imageHeight,
+      );
+
+      // ghost 1 — single offset
+      ghostCtx.globalAlpha = 0.4;
+      ghostCtx.drawImage(
+        subjectCanvas,
+        width / 2 - imageWidth / 2 + offset1,
+        height / 2 - imageHeight / 2 + 25 + yOffset + offset1,
+        imageWidth,
+        imageHeight,
+      );
+
+      ghostCtx.globalAlpha = 1.0;
+
+      // source-in: clip ghost to depths texture
+      ghostCtx.globalCompositeOperation = "source-in";
+      ghostCtx.drawImage(
+        depthsCanvas,
+        panX,
+        panY,
+        width / zoom,
+        height / zoom,
+        0,
+        0,
+        width,
+        height,
+      );
+      ghostCtx.globalCompositeOperation = "source-over";
+
+      // draw ghost 
+      ctx.drawImage(ghostCanvas, 0, 0);
+
+      // draw icon on top
       ctx.drawImage(iconCanvas, 0, 0);
+
+      // GIF has no partial transparency so this just makes the semi-transparent pixels darker
+      const frameData = ctx.getImageData(0, 0, width, height);
+      for (let i = 0; i < frameData.data.length; i += 4) {
+        const a = frameData.data[i + 3];
+        if (a > 0 && a < 255) {
+          frameData.data[i]     = Math.round(frameData.data[i]     * a / 255);
+          frameData.data[i + 1] = Math.round(frameData.data[i + 1] * a / 255);
+          frameData.data[i + 2] = Math.round(frameData.data[i + 2] * a / 255);
+          frameData.data[i + 3] = 255;
+        }
+      }
+      ctx.putImageData(frameData, 0, 0);
 
       encoder.addFrame(ctx as any);
     }
