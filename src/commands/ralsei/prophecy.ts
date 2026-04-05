@@ -46,16 +46,13 @@ export default {
       : path.join(process.cwd(), "static", "monochrome.png");
     const img = await loadImage(imageLoad);
 
-    // monochrome the image just in case
-    const monochromeCanvas = createCanvas(img.width, img.height);
+    // resize to render size to avoid processing huge uploads + fixes glitching out the whole image
+    const imageWidth = 250;
+    const imageHeight = 250;
+    const monochromeCanvas = createCanvas(imageWidth, imageHeight);
     const monochromeCtx = monochromeCanvas.getContext("2d");
-    monochromeCtx.drawImage(img, 0, 0);
-    const monochromeData = monochromeCtx.getImageData(
-      0,
-      0,
-      img.width,
-      img.height,
-    );
+    monochromeCtx.drawImage(img, 0, 0, imageWidth, imageHeight);
+    const monochromeData = monochromeCtx.getImageData(0, 0, imageWidth, imageHeight);
     for (let i = 0; i < monochromeData.data.length; i += 4) {
       const r = monochromeData.data[i];
       const g = monochromeData.data[i + 1];
@@ -67,17 +64,15 @@ export default {
     }
     monochromeCtx.putImageData(monochromeData, 0, 0);
 
-    // keep only white pixels of the image
-    const subjectCanvas = createCanvas(img.width, img.height);
+    // keep near-white pixels (>200 threshold survives JPEG artifacts/anti-aliasing)
+    const subjectCanvas = createCanvas(imageWidth, imageHeight);
     const subjectCtx = subjectCanvas.getContext("2d");
     subjectCtx.drawImage(monochromeCanvas, 0, 0);
-    const subjectData = subjectCtx.getImageData(0, 0, img.width, img.height);
+    const subjectData = subjectCtx.getImageData(0, 0, imageWidth, imageHeight);
     for (let i = 0; i < subjectData.data.length; i += 4) {
       const r = subjectData.data[i];
-      const g = subjectData.data[i + 1];
-      const b = subjectData.data[i + 2];
       const a = subjectData.data[i + 3];
-      if (r === 255 && g === 255 && b === 255 && a > 0) {
+      if (r > 200 && a > 0) {
         subjectData.data[i] = 255;
         subjectData.data[i + 1] = 255;
         subjectData.data[i + 2] = 255;
@@ -121,8 +116,6 @@ export default {
     const bobAmplitude = 15; // px up/down
     const ghostSpeed = 2;  // must also be integer for smooth loop
     const ghostAmplitude = 10; // px diagonal offset per ghost level
-    const imageWidth = 250;
-    const imageHeight = 250;
     const lines = text.split(/\\n|\n/);
     const lineHeight = 50;
 
