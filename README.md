@@ -46,7 +46,7 @@ A UT/DR focused Discord bot. Textbox Generation, Ralsei Images, Wiki Search, Com
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) v18 or higher
+- [Bun](https://bun.sh/)
 - [Python 3.x](https://python.org/) (optional, used in sprite extraction)
 - [A Discord bot token](https://discord.com/developers/applications)
 - [A Reddit app token](https://www.reddit.com/prefs/apps)
@@ -100,19 +100,7 @@ A UT/DR focused Discord bot. Textbox Generation, Ralsei Images, Wiki Search, Com
 
 #### Environment Variables
 
-```env
-# Required
-DISCORD_BOT_TOKEN=your_bot_token_here
-DISCORD_CLIENT_ID=your_client_id_here
-
-# Required for Reddit handler to work (/ralsei)
-REDDIT_CLIENT_ID=
-REDDIT_CLIENT_SECRET=
-
-# Optional, but recommended that you set these.
-RUN_MODE=dual  # bot, site, or dual
-EXPRESS_PORT=3000
-```
+Copy `.env.example` to `.env` and fill in the required values, read comments for more information on what each variable does.
 
 #### Content Sources
 
@@ -156,7 +144,7 @@ Make sure your contribution follows the general guidelines, and if you're openin
 
 For more information, read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
-### Contributors:
+### Contributors
 
 [![contributors](https://contributors-img.web.app/image?repo=BananaJeanss/ralseibot)](https://github.com/BananaJeanss/ralseibot/graphs/contributors)
 
@@ -167,6 +155,5 @@ This project is licensed under the MIT License, see the [LICENSE](LICENSE) file 
 ## Credits
 
 - **Sprites**: Extracted from Deltarune spritesheets via [Spriters Resource](https://www.spriters-resource.com/)
-- **Hero Banner**: [@morxwx](https://x.com/morxwx) on Twitter
 - **Quotes**: [HushBugger/hushbugger.github.io](https://github.com/HushBugger/hushbugger.github.io/tree/master/deltarune/text)
   for in-game quotes/text dump
