@@ -198,7 +198,15 @@ export default {
         disconnectHandled = true;
         // destroy connection if disconnected aka kicked
         player.stop(true);
-        await interaction.followUp("🔇 Disconnected from the voice channel.");
+        try {
+          if (interaction.channel && "send" in interaction.channel) {
+            await (interaction.channel as any).send(
+              "🔇 Disconnected from the voice channel.",
+            );
+          }
+        } catch (e) {
+          console.error("[radio] Failed to send disconnect message:", e);
+        }
         if (Bun.env.TS_RADIO_URL) {
           clearInterval(metadataPoll);
         }
