@@ -11,7 +11,7 @@ frozenlist==1.8.0
 git-filter-repo==2.47.0
 idna==3.11
 loguru==0.6.0
-lxml==6.0.0
+lxml==6.1.0
 multidict==6.7.1
 notify_py==0.3.43
 numpy==2.4.3
